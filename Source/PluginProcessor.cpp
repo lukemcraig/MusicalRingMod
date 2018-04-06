@@ -24,6 +24,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 	parameters(*this, nullptr)
 {
 	lfoInstantPhase_ = 0.0f;
+	midiNumber_ = 0.0f;
 
 	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
@@ -164,6 +165,18 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+	MidiMessage mResult;
+	int mSamplePosition;
+	for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(mResult, mSamplePosition);)
+	{
+		if (mResult.isNoteOn())
+		{
+			// convert the midi number to Hz, assuming A is 440Hz
+			float newFreq_ = 440.0f * pow(2.0f, ((float)mResult.getNoteNumber() - 69.0f) / 12.0f);
+			midiNumber_ = newFreq_;
+		}
+	}
+
 	auto* channelData = buffer.getWritePointer(0);
 	for (int sample = 0; sample < numSamples; ++sample) {
 		float in = channelData[sample];
@@ -180,15 +193,16 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			buffer.getWritePointer(channel)[sample] = out;
 		}
-
-		lfoInstantPhase_ += *parameters.getRawParameterValue(PID_LFO_FREQ) * (1.0f / sampleRate_);
+		float lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
+		lfoFreq = midiNumber_;
+		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);
 	}
 }
 
 //==============================================================================
 bool MusicalRingModAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return false; // (change this to false if you choose to not supply an editor)
 }
 
 AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()
