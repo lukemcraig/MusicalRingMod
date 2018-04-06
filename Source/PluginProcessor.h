@@ -1,9 +1,7 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
+  Musical Ring Mod by Luke Craig
 
   ==============================================================================
 */
@@ -55,7 +53,11 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	//==============================================================================
+	const String PID_LFO_FREQ = "lfofreq";
 private:
+	AudioProcessorValueTreeState parameters;
+
 	float sampleRate_;
 	float lfoInstantPhase_;
 	float lfoFreq_;

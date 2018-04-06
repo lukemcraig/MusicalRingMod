@@ -1,9 +1,7 @@
 /*
   ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
+	
+	Musical Ring Mod by Luke Craig
 
   ==============================================================================
 */
@@ -21,11 +19,21 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
 #endif
+	parameters(*this, nullptr)
 {
 	lfoInstantPhase_ = 0.0f;
 	lfoFreq_ = 20.0f;
+
+	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
+		"LFO Frequency", // paramter Name
+		String("Hz"), // parameter label (suffix)
+		NormalisableRange<float>(0.0f, 100.0f, 0, 0.5f), //range
+		20.0f, // default value
+		nullptr,
+		nullptr);
+
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -161,8 +169,6 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 
 		lfoInstantPhase_ += lfoFreq_ * (1.0f / sampleRate_);
 	}
-
-
 }
 
 //==============================================================================
