@@ -55,6 +55,7 @@ public:
 
 	//==============================================================================
 	const String PID_LFO_FREQ = "lfofreq";
+	const String PID_DEPTH = "depth";
 private:
 	AudioProcessorValueTreeState parameters;
 

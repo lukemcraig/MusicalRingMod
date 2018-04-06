@@ -38,6 +38,15 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
+	parameters.createAndAddParameter(PID_DEPTH, // parameter ID
+		"Modulation Depth", // paramter Name
+		String("%"), // parameter label (suffix)
+		NormalisableRange<float>(0.0f, 1.0f, 0), //range
+		1.0f, // default value
+		nullptr,
+		nullptr
+		);
+
 	parameters.state = ValueTree(Identifier("RingModParameters"));
 }
 
@@ -159,7 +168,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 	for (int sample = 0; sample < numSamples; ++sample) {
 		float in = channelData[sample];
 
-		float depth = 1.0f;
+		float depth = *parameters.getRawParameterValue(PID_DEPTH);
 		// m[n] = 1 - a + a * cos(n * wc)
 		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
 		// y[n]= m[n] * x[n]
