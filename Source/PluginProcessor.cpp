@@ -142,21 +142,27 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-		for (int sample = 0; sample < numSamples; ++sample) {
-			float in = channelData[sample];
-			
-			float depth = 1.0f;
-			// m[n] = 1 - a + a * cos(n * wc)
-			float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
-			// y[n]= m[n] * x[n]
-			float out = carrier * in;
-			channelData[sample] = out;
-			lfoInstantPhase_ += lfoFreq_ * (1.0f/ sampleRate_);
-		}	
-    }
+	auto* channelData = buffer.getWritePointer(0);
+	for (int sample = 0; sample < numSamples; ++sample) {
+		float in = channelData[sample];
+
+		float depth = 1.0f;
+		// m[n] = 1 - a + a * cos(n * wc)
+		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
+		// y[n]= m[n] * x[n]
+		float out = carrier * in;
+		channelData[sample] = out;
+
+		//update the other channels with the same sample value
+		for (int channel = 1; channel < totalNumInputChannels; ++channel)
+		{
+			buffer.getWritePointer(channel)[sample] = out;
+		}
+
+		lfoInstantPhase_ += lfoFreq_ * (1.0f / sampleRate_);
+	}
+
+
 }
 
 //==============================================================================
