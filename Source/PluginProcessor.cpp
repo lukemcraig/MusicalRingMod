@@ -29,7 +29,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
 		String("Hz"), // parameter label (suffix)
-		NormalisableRange<float>(0.0f, 100.0f, 0, 0.5f), //range
+		NormalisableRange<float>(0.0f, 10000.0f,0,0.5f), //range
 		20.0f, // default value
 		[](float value)
 		{
@@ -47,6 +47,23 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr,
 		nullptr
 		);
+	parameters.createAndAddParameter(PID_TOGGLE, // parameter ID
+		"freqToggle", // paramter Name
+		String(""), // parameter label (suffix)
+		NormalisableRange<float>(0.0f, 1.0f, 0), //range
+		0.0f, // default value
+		[](float value)
+		{
+			// value to text function (C++11 lambda)
+			return value < 0.5 ? "Midi" : "Slider";
+		},
+		[](const String& text)
+		{
+			// text to value function (C++11 lambda)
+			if (text == "Midi")    return 0.0f;
+			if (text == "Slider")  return 1.0f;
+			return 0.0f;
+		});
 
 	parameters.state = ValueTree(Identifier("RingModParameters"));
 }
@@ -172,7 +189,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		if (mResult.isNoteOn())
 		{
 			// convert the midi number to Hz, assuming A is 440Hz
-			float newFreq_ = 440.0f * pow(2.0f, ((float)mResult.getNoteNumber() - 69.0f) / 12.0f);
+			float newFreq_ = 440.0f * pow( 2.0f, ( (float)mResult.getNoteNumber() - 69.0f ) / 12.0f );
 			midiNumber_ = newFreq_;
 		}
 	}
@@ -193,9 +210,12 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			buffer.getWritePointer(channel)[sample] = out;
 		}
-		//float lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
 		float lfoFreq = midiNumber_;
+		if (*parameters.getRawParameterValue(PID_TOGGLE) == 1) {
+			lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
+		}
 		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);
+		
 	}
 }
 
@@ -207,7 +227,7 @@ bool MusicalRingModAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()
 {
-    return new MusicalRingModAudioProcessorEditor (*this);
+    return new MusicalRingModAudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================

@@ -56,6 +56,7 @@ public:
 	//==============================================================================
 	const String PID_LFO_FREQ = "lfofreq";
 	const String PID_DEPTH = "depth";
+	const String PID_TOGGLE = "toggle";
 	//==============================================================================
 	float midiNumber_;
 private:
