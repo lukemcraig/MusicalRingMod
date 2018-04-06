@@ -25,7 +25,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 #endif
 {
 	lfoInstantPhase_ = 0.0f;
-	lfoFreq_ = 5.0f;
+	lfoFreq_ = 20.0f;
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
