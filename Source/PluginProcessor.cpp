@@ -24,16 +24,21 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 	parameters(*this, nullptr)
 {
 	lfoInstantPhase_ = 0.0f;
-	lfoFreq_ = 20.0f;
 
 	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
 		String("Hz"), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 100.0f, 0, 0.5f), //range
 		20.0f, // default value
-		nullptr,
-		nullptr);
+		[](float value)
+		{
+			// value to text function (C++11 lambda)
+			return String(value) ;
+		},
+		nullptr
+		);
 
+	parameters.state = ValueTree(Identifier("RingModParameters"));
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -167,7 +172,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			buffer.getWritePointer(channel)[sample] = out;
 		}
 
-		lfoInstantPhase_ += lfoFreq_ * (1.0f / sampleRate_);
+		lfoInstantPhase_ += *parameters.getRawParameterValue(PID_LFO_FREQ) * (1.0f / sampleRate_);
 	}
 }
 
@@ -185,15 +190,19 @@ AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()
 //==============================================================================
 void MusicalRingModAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    // store parameters
+	ScopedPointer<XmlElement> xml(parameters.state.createXml());
+	copyXmlToBinary(*xml, destData);
 }
 
 void MusicalRingModAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    //restore parameters
+	ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState != nullptr)
+		if (xmlState->hasTagName(parameters.state.getType()))
+			parameters.state = ValueTree::fromXml(*xmlState);
 }
 
 //==============================================================================

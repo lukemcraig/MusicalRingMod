@@ -60,7 +60,6 @@ private:
 
 	float sampleRate_;
 	float lfoInstantPhase_;
-	float lfoFreq_;
     //==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
 		
