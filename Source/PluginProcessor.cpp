@@ -193,8 +193,8 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			buffer.getWritePointer(channel)[sample] = out;
 		}
-		float lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
-		lfoFreq = midiNumber_;
+		//float lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
+		float lfoFreq = midiNumber_;
 		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);
 	}
 }
@@ -202,7 +202,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 //==============================================================================
 bool MusicalRingModAudioProcessor::hasEditor() const
 {
-    return false; // (change this to false if you choose to not supply an editor)
+    return true; // (change this to false if you choose to not supply an editor)
 }
 
 AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()

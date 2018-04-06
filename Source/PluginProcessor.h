@@ -56,12 +56,14 @@ public:
 	//==============================================================================
 	const String PID_LFO_FREQ = "lfofreq";
 	const String PID_DEPTH = "depth";
+	//==============================================================================
+	float midiNumber_;
 private:
 	AudioProcessorValueTreeState parameters;
 
 	float sampleRate_;
 	float lfoInstantPhase_;
-	float midiNumber_;
+
     //==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
 		

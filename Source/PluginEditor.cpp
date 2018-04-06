@@ -16,6 +16,15 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
+	lfoFreqSlider_.setSliderStyle(Slider::LinearHorizontal);
+	lfoFreqSlider_.setRange(0,10000,0);
+	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxLeft, false, 120, lfoFreqSlider_.getTextBoxHeight());
+	lfoFreqSlider_.setPopupDisplayEnabled(true, false, this);
+	lfoFreqSlider_.setTextValueSuffix("Hz");
+
+	addAndMakeVisible(&lfoFreqSlider_);
+
+	startTimerHz(30);
 }
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
@@ -34,6 +43,11 @@ void MusicalRingModAudioProcessorEditor::paint (Graphics& g)
 
 void MusicalRingModAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+	const int LEFT_BOUND = 30;
+	lfoFreqSlider_.setBounds(LEFT_BOUND, 30, 300, 40);
+}
+
+void MusicalRingModAudioProcessorEditor::timerCallback()
+{
+	lfoFreqSlider_.setValue(processor.midiNumber_);
 }
