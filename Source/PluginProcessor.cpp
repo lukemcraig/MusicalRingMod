@@ -24,6 +24,8 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
                        )
 #endif
 {
+	lfoInstantPhase_ = 0.0f;
+	lfoFreq_ = 5.0f;
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -145,15 +147,14 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         auto* channelData = buffer.getWritePointer (channel);
 		for (int sample = 0; sample < numSamples; ++sample) {
 			float in = channelData[sample];
-			float lfoInstantPhase = 0.0f;
-			float lfoFreq = 0.0f;
+			
 			float depth = 1.0f;
 			// m[n] = 1 - a + a * cos(n * wc)
-			float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase);
+			float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
 			// y[n]= m[n] * x[n]
 			float out = carrier * in;
 			channelData[sample] = out;
-			lfoInstantPhase += lfoFreq * 1.0f/ sampleRate_;
+			lfoInstantPhase_ += lfoFreq_ * (1.0f/ sampleRate_);
 		}	
     }
 }

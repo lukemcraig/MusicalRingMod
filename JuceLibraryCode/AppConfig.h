@@ -317,7 +317,7 @@
  #define JucePlugin_Desc                   "Musical Ring Mod"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "liminalsignals"
+ #define JucePlugin_Manufacturer           "Liminal Signals"
 #endif
 #ifndef  JucePlugin_ManufacturerWebsite
  #define JucePlugin_ManufacturerWebsite    ""
@@ -419,5 +419,5 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "liminalsignals: Musical Ring Mod"
+ #define JucePlugin_IAAName                "Liminal Signals: Musical Ring Mod"
 #endif

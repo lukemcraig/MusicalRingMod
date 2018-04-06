@@ -2,7 +2,7 @@
 
 <JUCERPROJECT name="MusicalRingMod" projectType="audioplug" buildStandalone="1"
               jucerVersion="5.3.0" companyName="Liminal Signals" pluginName="Musical Ring Mod"
-              pluginDesc="Musical Ring Mod" pluginManufacturer="liminalsignals"
+              pluginDesc="Musical Ring Mod" pluginManufacturer="Liminal Signals"
               pluginWantsMidiIn="1">
   <MAINGROUP id="xx77tt" name="MusicalRingMod">
     <GROUP id="{2F533566-F4DE-CBF8-2446-E7EDF622AD24}" name="Source">
