@@ -25,7 +25,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
 	//valueTreeState.addParameterListener(processor.PID_LFO_FREQ, this);
 
-	freqToggle_.setButtonText("Midi 0 or Slider 1");
+	freqToggle_.setButtonText("Ignore Midi");
 	addAndMakeVisible(freqToggle_);
 	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE, freqToggle_));
 	valueTreeState.addParameterListener(processor.PID_TOGGLE, this);

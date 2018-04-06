@@ -216,7 +216,11 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		}
 		DBG(lfoFreq);
 		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);
-		
+		// wrap the instantaneous phase from 0.0 to 1.0
+		if (lfoInstantPhase_ >= 1.0f) {
+			lfoInstantPhase_ -= 1.0f;
+		}
+		jassert(lfoInstantPhase_<1.0f);
 	}
 }
 
