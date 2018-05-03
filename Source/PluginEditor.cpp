@@ -14,7 +14,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
     : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
 
-    setSize (600, 300);
+    setSize (600, 400);
 
 	lfoFreqSliderLabel_.setText("Frequency:",dontSendNotification);
 	addAndMakeVisible(lfoFreqSliderLabel_);
@@ -47,6 +47,12 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	fOutLabel_.setText("Output Frequencies:", dontSendNotification);
 	addAndMakeVisible(fOutLabel_);
 
+	fLabel_.setText("f:", dontSendNotification);
+	addAndMakeVisible(fLabel_);
+
+	fcLabel_.setText("fc:", dontSendNotification);
+	addAndMakeVisible(fcLabel_);
+
 	f0Label_.setText("f0:", dontSendNotification);
 	addAndMakeVisible(f0Label_);
 
@@ -62,6 +68,14 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	f4Label_.setText("f4:", dontSendNotification);
 	addAndMakeVisible(f4Label_);
 
+	f5Label_.setText("f5:", dontSendNotification);
+	addAndMakeVisible(f5Label_);
+
+	fValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(fValueLabel_);
+
+	fcValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(fcValueLabel_);
 
 	f0ValueLabel_.setText("", dontSendNotification);
 	addAndMakeVisible(f0ValueLabel_);
@@ -77,6 +91,9 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 
 	f4ValueLabel_.setText("", dontSendNotification);
 	addAndMakeVisible(f4ValueLabel_);
+
+	f5ValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(f5ValueLabel_);
 
 	startTimerHz(30);
 }
@@ -116,17 +133,25 @@ void MusicalRingModAudioProcessorEditor::resized()
 
 	fOutLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	auto fLeftArea = fArea.removeFromLeft(fArea.getWidth()/2);
+
+	fLabel_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+	fcLabel_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+
 	f0Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	f1Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	f2Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	f3Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	f4Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+	f5Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 
+	fValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	fcValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f0ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f1ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f2ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f3ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f4ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	f5ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 
 	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
 	depthSlider_.setBounds(depthArea.reduced(20, 10));
@@ -139,9 +164,28 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 	// assuming the midi input is the input signal's fundamental frequency
 	auto f = processor.midiNumber_;
 	auto fc = lfoFreqSlider_.getValue();
-	f0ValueLabel_.setText( String(f - fc) , dontSendNotification);
-	f1ValueLabel_.setText(String(f + fc), dontSendNotification);
-	f2ValueLabel_.setText(String(2*f - fc), dontSendNotification);
-	f3ValueLabel_.setText(String(2 * f + fc), dontSendNotification);
-	f4ValueLabel_.setText(String(3 * f - fc), dontSendNotification);
+
+	fValueLabel_.setText(String(f)		+ "Hz,  " + frequencyToNoteName(f), dontSendNotification);
+	fcValueLabel_.setText(String(fc)	+ "Hz,  " + frequencyToNoteName(fc), dontSendNotification);
+	auto f0 = f - fc;						    
+	f0ValueLabel_.setText(String(f0)	+ "Hz,  " + frequencyToNoteName(f0), dontSendNotification);
+	auto f1 = f + fc;						    
+	f1ValueLabel_.setText(String(f1)	+ "Hz,  "+ frequencyToNoteName(f1), dontSendNotification);
+	auto f2 = 2 * f - fc;					    
+	f2ValueLabel_.setText(String(f2)	+ "Hz,  " + frequencyToNoteName(f2), dontSendNotification);
+	auto f3 = 2 * f + fc;					    
+	f3ValueLabel_.setText(String(f3)	+ "Hz,  " + frequencyToNoteName(f3), dontSendNotification);
+	auto f4 = 3 * f - fc;					    
+	f4ValueLabel_.setText(String(f4)	+ "Hz,  " + frequencyToNoteName(f4), dontSendNotification);
+	auto f5 = 3 * f + fc;					    
+	f5ValueLabel_.setText(String(f5)	+ "Hz,  " + frequencyToNoteName(f5), dontSendNotification);
+}
+
+String MusicalRingModAudioProcessorEditor::frequencyToNoteName(double f) {
+	auto halfStepsAboveC0 = roundDoubleToInt(12.0 * log2(f/16.3516));
+	if (halfStepsAboveC0 <= 12)
+		return String("");
+	auto octave = halfStepsAboveC0 / 12;
+	auto noteIndex = halfStepsAboveC0 % octave;
+	return String(noteNames[noteIndex]) + String(octave);
 }

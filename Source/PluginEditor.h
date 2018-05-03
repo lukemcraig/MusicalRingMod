@@ -27,7 +27,9 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-	void timerCallback() override;	
+	void timerCallback() override;
+	
+
 private:
 	
 	AudioProcessorValueTreeState& valueTreeState;
@@ -40,17 +42,26 @@ private:
 	Label lfoFreqSliderLabel_;
 
 	Label fOutLabel_;
+
+	Label fLabel_;
+	Label fcLabel_;
+
 	Label f0Label_;
 	Label f1Label_;
 	Label f2Label_;
 	Label f3Label_;
 	Label f4Label_;
+	Label f5Label_;
+
+	Label fValueLabel_;
+	Label fcValueLabel_;
 
 	Label f0ValueLabel_;
 	Label f1ValueLabel_;
 	Label f2ValueLabel_;
 	Label f3ValueLabel_;
 	Label f4ValueLabel_;
+	Label f5ValueLabel_;
 
 	enum RadioButtonIds
 	{
@@ -65,5 +76,9 @@ private:
 	std::unique_ptr<SliderAttachment> depthSliderAttachment_;
 	Label depthSliderLabel_;
 
+	String frequencyToNoteName(double f);
+
+	const std::string noteNames[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicalRingModAudioProcessorEditor)
 };
