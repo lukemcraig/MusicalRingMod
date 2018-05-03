@@ -13,7 +13,6 @@
 MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor& p, AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
-	updateSlider_ = true;
 
     setSize (400, 300);
 
@@ -25,12 +24,12 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), lfoFreqSlider_.getTextBoxHeight());
 	addAndMakeVisible(&lfoFreqSlider_);
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
-	//valueTreeState.addParameterListener(processor.PID_LFO_FREQ, this);
+	
 
-	freqToggle_.setButtonText("Ignore Midi");
+	freqToggle_.setButtonText("Set From Midi");
 	addAndMakeVisible(freqToggle_);
 	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE, freqToggle_));
-	valueTreeState.addParameterListener(processor.PID_TOGGLE, this);
+	
 
 	depthSliderLabel_.setText("Depth:", dontSendNotification);
 	addAndMakeVisible(depthSliderLabel_);
@@ -46,7 +45,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
 {
-	valueTreeState.removeParameterListener(processor.PID_TOGGLE, this);
+	
 }
 
 //==============================================================================
@@ -82,13 +81,6 @@ void MusicalRingModAudioProcessorEditor::resized()
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {	
-	if(updateSlider_)
+	if(*valueTreeState.getRawParameterValue(processor.PID_TOGGLE) == 1.0f)
 		lfoFreqSlider_.setValue(processor.midiNumber_);
-}
-
-void MusicalRingModAudioProcessorEditor::parameterChanged(const String & parameterID, float newValue)
-{
-	if (parameterID == processor.PID_TOGGLE) {
-		updateSlider_ = newValue==0;
-	}
 }

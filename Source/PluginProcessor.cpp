@@ -58,7 +58,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			return text.getFloatValue()*0.01;
 		});
 	parameters.createAndAddParameter(PID_TOGGLE, // parameter ID
-		"freqToggle", // paramter Name
+		"Freq Source", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
 		0.0f, // default value
@@ -221,7 +221,8 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			buffer.getWritePointer(channel)[sample] = out;
 		}
 		float lfoFreq = midiNumber_; 
-		if (*parameters.getRawParameterValue(PID_TOGGLE) == 1) {
+		auto bob = *parameters.getRawParameterValue(PID_TOGGLE);
+		if (bob == 0.0f) {
 			lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
 		}
 		DBG(lfoFreq);

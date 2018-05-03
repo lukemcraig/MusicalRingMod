@@ -15,7 +15,6 @@
 /**
 */
 class MusicalRingModAudioProcessorEditor  : public AudioProcessorEditor,
-	public AudioProcessorValueTreeState::Listener,
 	private Timer
 {
 public:
@@ -28,8 +27,7 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-	void timerCallback() override;
-	void parameterChanged(const String &parameterID, float newValue) override;
+	void timerCallback() override;	
 private:
 	
 	AudioProcessorValueTreeState& valueTreeState;
@@ -43,8 +41,6 @@ private:
 
 	ToggleButton freqToggle_;
 	std::unique_ptr<ButtonAttachment> freqToggleAttachment_;
-
-	bool updateSlider_;
 
 	Slider depthSlider_;
 	std::unique_ptr<SliderAttachment> depthSliderAttachment_;
