@@ -46,5 +46,9 @@ private:
 
 	bool updateSlider_;
 
+	Slider depthSlider_;
+	std::unique_ptr<SliderAttachment> depthSliderAttachment_;
+	Label depthSliderLabel_;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicalRingModAudioProcessorEditor)
 };

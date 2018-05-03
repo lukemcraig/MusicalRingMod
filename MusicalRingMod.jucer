@@ -3,7 +3,9 @@
 <JUCERPROJECT name="MusicalRingMod" projectType="audioplug" buildStandalone="1"
               jucerVersion="5.3.1" companyName="Liminal Signals" pluginName="Musical Ring Mod"
               pluginDesc="Musical Ring Mod" pluginManufacturer="Liminal Signals"
-              pluginWantsMidiIn="1" pluginFormats="buildStandalone" pluginCharacteristicsValue="pluginWantsMidiIn">
+              pluginWantsMidiIn="1" pluginFormats="buildStandalone,buildVST"
+              pluginCharacteristicsValue="pluginWantsMidiIn" buildVST="1" buildVST3="0"
+              buildAU="0" buildAUv3="0" buildRTAS="0" buildAAX="0" enableIAA="0">
   <MAINGROUP id="xx77tt" name="MusicalRingMod">
     <GROUP id="{2F533566-F4DE-CBF8-2446-E7EDF622AD24}" name="Source">
       <FILE id="gWigjJ" name="PluginProcessor.cpp" compile="1" resource="0"

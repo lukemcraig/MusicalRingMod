@@ -20,11 +20,9 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	lfoFreqSliderLabel_.setText("Frequency:",dontSendNotification);
 	addAndMakeVisible(lfoFreqSliderLabel_);
 
-	lfoFreqSlider_.setSliderStyle(Slider::LinearHorizontal);
+	lfoFreqSlider_.setSliderStyle(Slider::LinearVertical);
 	lfoFreqSlider_.setRange(0,10000,0.0);
-	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxLeft, false, 120, lfoFreqSlider_.getTextBoxHeight());
-	lfoFreqSlider_.setPopupDisplayEnabled(false, false, false);
-	lfoFreqSlider_.setTextValueSuffix("Hz");
+	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), lfoFreqSlider_.getTextBoxHeight());
 	addAndMakeVisible(&lfoFreqSlider_);
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
 	//valueTreeState.addParameterListener(processor.PID_LFO_FREQ, this);
@@ -33,6 +31,15 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(freqToggle_);
 	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE, freqToggle_));
 	valueTreeState.addParameterListener(processor.PID_TOGGLE, this);
+
+	depthSliderLabel_.setText("Depth:", dontSendNotification);
+	addAndMakeVisible(depthSliderLabel_);
+
+	depthSlider_.setSliderStyle(Slider::LinearVertical);
+	depthSlider_.setRange(0, 1.0, 0.00);
+	depthSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), depthSlider_.getTextBoxHeight());
+	addAndMakeVisible(&depthSlider_);
+	depthSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider_));
 
 	startTimerHz(30);
 }
@@ -55,10 +62,22 @@ void MusicalRingModAudioProcessorEditor::paint (Graphics& g)
 void MusicalRingModAudioProcessorEditor::resized()
 {
 	auto area = getLocalBounds();
+	// margins
 	area.reduce(10, 10);	
-	lfoFreqSliderLabel_.setBounds(area.removeFromTop(40).reduced(0, 10));
-	lfoFreqSlider_.setBounds(area.removeFromTop(40).reduced(20, 10));
-	freqToggle_.setBounds(area.removeFromTop(40).reduced(20,10));
+
+	auto paneAreaWidth = area.getWidth() / 2;
+	auto paneMargin = 5;
+
+	auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+	auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+
+	lfoFreqSliderLabel_.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
+	freqToggle_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
+	lfoFreqSlider_.setBounds(freqArea.reduced(20, 10));
+	
+
+	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
+	depthSlider_.setBounds(depthArea.reduced(20, 10));
 }
 
 void MusicalRingModAudioProcessorEditor::timerCallback()

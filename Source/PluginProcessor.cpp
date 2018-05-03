@@ -34,19 +34,29 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		[](float value)
 		{
 			// value to text function (C++11 lambda)
-			return String(value) ;
+			return String(value,3) ;
 		},
-		nullptr
-		);
+		[](const String& text)
+		{
+			// text to value function (C++11 lambda)			
+			return text.getFloatValue();
+		});
 
 	parameters.createAndAddParameter(PID_DEPTH, // parameter ID
 		"Modulation Depth", // paramter Name
 		String("%"), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
 		1.0f, // default value
-		nullptr,
-		nullptr
-		);
+		[](float value)
+		{
+			// value to text function (C++11 lambda)
+			return String(value*100.0f,2)+String("%");
+		},
+		[](const String& text)
+		{
+			// text to value function (C++11 lambda)			
+			return text.getFloatValue()*0.01;
+		});
 	parameters.createAndAddParameter(PID_TOGGLE, // parameter ID
 		"freqToggle", // paramter Name
 		String(""), // parameter label (suffix)
