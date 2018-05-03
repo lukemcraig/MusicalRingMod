@@ -39,8 +39,14 @@ private:
 	std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment_;
 	Label lfoFreqSliderLabel_;
 
-	ToggleButton freqToggle_;
+	enum RadioButtonIds
+	{
+		FrequencySourceButtons = 1001
+	};
+
+	ToggleButton midiSourceButton_;
 	std::unique_ptr<ButtonAttachment> freqToggleAttachment_;
+	ToggleButton sliderSourceButton_;
 
 	Slider depthSlider_;
 	std::unique_ptr<SliderAttachment> depthSliderAttachment_;

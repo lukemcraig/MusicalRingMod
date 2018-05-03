@@ -25,11 +25,15 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(&lfoFreqSlider_);
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
 	
-
-	freqToggle_.setButtonText("Set From Midi");
-	addAndMakeVisible(freqToggle_);
-	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE, freqToggle_));
+	midiSourceButton_.setButtonText("Midi");
+	addAndMakeVisible(midiSourceButton_);
+	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE, midiSourceButton_));
+	midiSourceButton_.setRadioGroupId(FrequencySourceButtons);
 	
+	sliderSourceButton_.setButtonText("Slider");
+	addAndMakeVisible(sliderSourceButton_);	
+	sliderSourceButton_.setRadioGroupId(FrequencySourceButtons);
+	sliderSourceButton_.setToggleState(!midiSourceButton_.getToggleState(),false);
 
 	depthSliderLabel_.setText("Depth:", dontSendNotification);
 	addAndMakeVisible(depthSliderLabel_);
@@ -71,7 +75,8 @@ void MusicalRingModAudioProcessorEditor::resized()
 	auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 
 	lfoFreqSliderLabel_.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
-	freqToggle_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
+	midiSourceButton_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
+	sliderSourceButton_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
 	lfoFreqSlider_.setBounds(freqArea.reduced(20, 10));
 	
 
