@@ -39,6 +39,7 @@ private:
 
 	Slider lfoFreqSlider_;
 	std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment_;
+	Label lfoFreqSliderLabel_;
 
 	ToggleButton freqToggle_;
 	std::unique_ptr<ButtonAttachment> freqToggleAttachment_;

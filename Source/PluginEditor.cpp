@@ -16,10 +16,14 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	updateSlider_ = true;
 
     setSize (400, 300);
+
+	lfoFreqSliderLabel_.setText("Frequency:",dontSendNotification);
+	addAndMakeVisible(lfoFreqSliderLabel_);
+
 	lfoFreqSlider_.setSliderStyle(Slider::LinearHorizontal);
-	lfoFreqSlider_.setRange(0,10000,0);
+	lfoFreqSlider_.setRange(0,10000,0.0);
 	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxLeft, false, 120, lfoFreqSlider_.getTextBoxHeight());
-	lfoFreqSlider_.setPopupDisplayEnabled(true, false, this);
+	lfoFreqSlider_.setPopupDisplayEnabled(false, false, false);
 	lfoFreqSlider_.setTextValueSuffix("Hz");
 	addAndMakeVisible(&lfoFreqSlider_);
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
@@ -50,9 +54,11 @@ void MusicalRingModAudioProcessorEditor::paint (Graphics& g)
 
 void MusicalRingModAudioProcessorEditor::resized()
 {
-	const int LEFT_BOUND = 30;
-	lfoFreqSlider_.setBounds(LEFT_BOUND, 30, 300, 40);
-	freqToggle_.setBounds(LEFT_BOUND, lfoFreqSlider_.getBottom(), 300, 40);
+	auto area = getLocalBounds();
+	area.reduce(10, 10);	
+	lfoFreqSliderLabel_.setBounds(area.removeFromTop(40).reduced(0, 10));
+	lfoFreqSlider_.setBounds(area.removeFromTop(40).reduced(20, 10));
+	freqToggle_.setBounds(area.removeFromTop(40).reduced(20,10));
 }
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
