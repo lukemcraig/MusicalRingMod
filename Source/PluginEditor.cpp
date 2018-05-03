@@ -14,7 +14,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
     : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
 
-    setSize (400, 300);
+    setSize (600, 300);
 
 	lfoFreqSliderLabel_.setText("Frequency:",dontSendNotification);
 	addAndMakeVisible(lfoFreqSliderLabel_);
@@ -44,6 +44,40 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(&depthSlider_);
 	depthSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider_));
 
+	fOutLabel_.setText("Output Frequencies:", dontSendNotification);
+	addAndMakeVisible(fOutLabel_);
+
+	f0Label_.setText("f0:", dontSendNotification);
+	addAndMakeVisible(f0Label_);
+
+	f1Label_.setText("f1:", dontSendNotification);
+	addAndMakeVisible(f1Label_);
+
+	f2Label_.setText("f2:", dontSendNotification);
+	addAndMakeVisible(f2Label_);
+
+	f3Label_.setText("f3:", dontSendNotification);
+	addAndMakeVisible(f3Label_);
+
+	f4Label_.setText("f4:", dontSendNotification);
+	addAndMakeVisible(f4Label_);
+
+
+	f0ValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(f0ValueLabel_);
+
+	f1ValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(f1ValueLabel_);
+
+	f2ValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(f2ValueLabel_);
+
+	f3ValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(f3ValueLabel_);
+
+	f4ValueLabel_.setText("", dontSendNotification);
+	addAndMakeVisible(f4ValueLabel_);
+
 	startTimerHz(30);
 }
 
@@ -68,17 +102,31 @@ void MusicalRingModAudioProcessorEditor::resized()
 	// margins
 	area.reduce(10, 10);	
 
-	auto paneAreaWidth = area.getWidth() / 2;
+	auto paneAreaWidth = area.getWidth() / 3;
 	auto paneMargin = 5;
 
 	auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+	auto fArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 	auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 
 	lfoFreqSliderLabel_.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
 	midiSourceButton_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
 	sliderSourceButton_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
 	lfoFreqSlider_.setBounds(freqArea.reduced(20, 10));
-	
+
+	fOutLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	auto fLeftArea = fArea.removeFromLeft(fArea.getWidth()/2);
+	f0Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+	f1Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+	f2Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+	f3Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+	f4Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+
+	f0ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	f1ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	f2ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	f3ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	f4ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 
 	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
 	depthSlider_.setBounds(depthArea.reduced(20, 10));
@@ -88,4 +136,12 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 {	
 	if(*valueTreeState.getRawParameterValue(processor.PID_TOGGLE) == 1.0f)
 		lfoFreqSlider_.setValue(processor.midiNumber_);
+	// assuming the midi input is the input signal's fundamental frequency
+	auto f = processor.midiNumber_;
+	auto fc = lfoFreqSlider_.getValue();
+	f0ValueLabel_.setText( String(f - fc) , dontSendNotification);
+	f1ValueLabel_.setText(String(f + fc), dontSendNotification);
+	f2ValueLabel_.setText(String(2*f - fc), dontSendNotification);
+	f3ValueLabel_.setText(String(2 * f + fc), dontSendNotification);
+	f4ValueLabel_.setText(String(3 * f - fc), dontSendNotification);
 }

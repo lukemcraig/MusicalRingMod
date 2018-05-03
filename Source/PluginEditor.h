@@ -39,6 +39,19 @@ private:
 	std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment_;
 	Label lfoFreqSliderLabel_;
 
+	Label fOutLabel_;
+	Label f0Label_;
+	Label f1Label_;
+	Label f2Label_;
+	Label f3Label_;
+	Label f4Label_;
+
+	Label f0ValueLabel_;
+	Label f1ValueLabel_;
+	Label f2ValueLabel_;
+	Label f3ValueLabel_;
+	Label f4ValueLabel_;
+
 	enum RadioButtonIds
 	{
 		FrequencySourceButtons = 1001

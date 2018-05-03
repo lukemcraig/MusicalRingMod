@@ -221,11 +221,10 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			buffer.getWritePointer(channel)[sample] = out;
 		}
 		float lfoFreq = midiNumber_; 
-		auto bob = *parameters.getRawParameterValue(PID_TOGGLE);
-		if (bob == 0.0f) {
+		if (*parameters.getRawParameterValue(PID_TOGGLE) == 0.0f) {
 			lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
 		}
-		DBG(lfoFreq);
+		//DBG(lfoFreq);
 		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);
 		// wrap the instantaneous phase from 0.0 to 1.0
 		if (lfoInstantPhase_ >= 1.0f) {
