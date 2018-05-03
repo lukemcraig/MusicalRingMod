@@ -146,6 +146,7 @@ void MusicalRingModAudioProcessorEditor::resized()
 
 	fValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	fcValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+
 	f0ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f1ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
 	f2ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
@@ -186,6 +187,6 @@ String MusicalRingModAudioProcessorEditor::frequencyToNoteName(double f) {
 	if (halfStepsAboveC0 <= 12)
 		return String("");
 	auto octave = halfStepsAboveC0 / 12;
-	auto noteIndex = halfStepsAboveC0 % octave;
+	auto noteIndex = halfStepsAboveC0 % 12;
 	return String(noteNames[noteIndex]) + String(octave);
 }
