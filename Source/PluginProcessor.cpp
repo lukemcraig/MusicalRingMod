@@ -66,7 +66,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			// text to value function (C++11 lambda)			
 			return text.getFloatValue()*0.01;
 		});
-	parameters.createAndAddParameter(PID_TOGGLE, // parameter ID
+	parameters.createAndAddParameter(PID_TOGGLE_MIDI_SOURCE, // parameter ID
 		"Freq Source", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
@@ -230,7 +230,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			buffer.getWritePointer(channel)[sample] = out;
 		}
 		float lfoFreq = midiFreqOffsetted_ ;
-		if (*parameters.getRawParameterValue(PID_TOGGLE) == 0.0f) {
+		if (*parameters.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE) == 0.0f) {
 			lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
 		}
 		//DBG(lfoFreq);
@@ -246,11 +246,6 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 float MusicalRingModAudioProcessor::convertMIDIToHz(float noteNumber, float semiToneOffset, float a4)
 {
 	return a4 * pow(2.0f, (noteNumber + semiToneOffset - 69.0f) / 12.0f);
-}
-
-float MusicalRingModAudioProcessor::addSemitoneToHz(float originalFreq, float semiToneOffset, float a4)
-{
-	return exp(semiToneOffset*log(2)/12.0) * originalFreq;
 }
 
 //==============================================================================

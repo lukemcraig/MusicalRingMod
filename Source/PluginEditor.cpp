@@ -20,14 +20,14 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(lfoFreqSliderLabel_);
 
 	lfoFreqSlider_.setSliderStyle(Slider::LinearVertical);
-	//lfoFreqSlider_.setRange(0,10000,0.0);
+
 	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), lfoFreqSlider_.getTextBoxHeight());
 	addAndMakeVisible(&lfoFreqSlider_);
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
 	
 	midiSourceButton_.setButtonText("Midi");
 	addAndMakeVisible(midiSourceButton_);
-	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE, midiSourceButton_));
+	freqToggleAttachment_.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE_MIDI_SOURCE, midiSourceButton_));
 	midiSourceButton_.setRadioGroupId(FrequencySourceButtons);
 	
 	sliderSourceButton_.setButtonText("Slider");
@@ -52,7 +52,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(depthSliderLabel_);
 
 	depthSlider_.setSliderStyle(Slider::LinearVertical);
-	//depthSlider_.setRange(0, 1.0, 0.00);
+
 	depthSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), depthSlider_.getTextBoxHeight());
 	addAndMakeVisible(&depthSlider_);
 	depthSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider_));
@@ -177,8 +177,13 @@ void MusicalRingModAudioProcessorEditor::resized()
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {	
-	if(*valueTreeState.getRawParameterValue(processor.PID_TOGGLE) == 1.0f)
+	if (*valueTreeState.getRawParameterValue(processor.PID_TOGGLE_MIDI_SOURCE) == 1.0f) {
 		lfoFreqSlider_.setValue(processor.midiFreqOffsetted_);
+		offsetsSlider_.setVisible(true);
+	}
+	else {
+		offsetsSlider_.setVisible(false);
+	}
 	// assuming the midi input is the input signal's fundamental frequency
 	auto f = processor.midiFreq_;
 	auto fc = lfoFreqSlider_.getValue();

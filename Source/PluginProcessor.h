@@ -32,8 +32,6 @@ public:
 
 	float convertMIDIToHz(float noteNumber, float semiToneOffset, float a4);
 
-	float addSemitoneToHz(float originalFreq, float semiToneOffset, float a4);
-
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
@@ -61,7 +59,7 @@ public:
 	const String PID_LFO_FREQ = "lfofreq";
 	const String PID_OFFSET = "offset";
 	const String PID_DEPTH = "depth";
-	const String PID_TOGGLE = "toggle";
+	const String PID_TOGGLE_MIDI_SOURCE = "toggle";
 	//==============================================================================
 	float midiFreqOffsetted_;
 	float midiFreq_;
