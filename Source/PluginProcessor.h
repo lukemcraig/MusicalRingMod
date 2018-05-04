@@ -13,7 +13,8 @@
 //==============================================================================
 /**
 */
-class MusicalRingModAudioProcessor  : public AudioProcessor
+class MusicalRingModAudioProcessor  : public AudioProcessor, 
+	private MidiKeyboardStateListener
 {
 public:
     //==============================================================================
@@ -84,8 +85,11 @@ private:
 	float* parameterStandard_	= nullptr;
 
 
+	// Inherited via MidiKeyboardStateListener
+	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
+
+	virtual void handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
 
     //==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
-		
 };

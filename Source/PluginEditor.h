@@ -15,7 +15,8 @@
 /**
 */
 class MusicalRingModAudioProcessorEditor  : public AudioProcessorEditor,
-	private Timer
+	private Timer,
+	private MidiKeyboardStateListener
 {
 public:
 	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
@@ -97,7 +98,11 @@ private:
 	const std::string noteNames[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
 	MidiKeyboardComponent keyboard_;
-	MidiKeyboardState& keyboardState_;
-	
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicalRingModAudioProcessorEditor)
+	MidiKeyboardState& keyboardState_;    
+
+	// Inherited via MidiKeyboardStateListener
+	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
+	virtual void handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
 };

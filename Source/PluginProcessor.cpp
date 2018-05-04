@@ -136,6 +136,8 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 	parameterDepth_		= parameters_.getRawParameterValue(PID_DEPTH);
 	parameterSource_	= parameters_.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE);
 	parameterStandard_	= parameters_.getRawParameterValue(PID_STANDARD);
+
+	keyboardState_.addListener(this);
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -260,6 +262,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			// convert the midi number to Hz			
 			midiNote_ = mResult.getNoteNumber();
+			
 		}
 	}
 
@@ -335,6 +338,16 @@ void MusicalRingModAudioProcessor::setStateInformation (const void* data, int si
 	if (xmlState != nullptr)
 		if (xmlState->hasTagName(parameters_.state.getType()))
 			parameters_.state = ValueTree::fromXml(*xmlState);
+}
+
+void MusicalRingModAudioProcessor::handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
+{
+	DBG("Yo");
+	midiNote_ = midiNoteNumber;
+}
+
+void MusicalRingModAudioProcessor::handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
+{
 }
 
 //==============================================================================

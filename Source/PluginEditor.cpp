@@ -75,6 +75,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 
 
 	addAndMakeVisible(keyboard_);
+	keyboardState_.addListener(this);
 
 	startTimerHz(30);
 }
@@ -135,8 +136,11 @@ void MusicalRingModAudioProcessorEditor::setupFLabels()
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
 {
-	
+	keyboardState_.removeListener(this);
 }
+
+
+
 
 //==============================================================================
 void MusicalRingModAudioProcessorEditor::paint (Graphics& g)
@@ -253,4 +257,12 @@ String MusicalRingModAudioProcessorEditor::frequencyToNoteName(double f) {
 	auto octave = halfStepsAboveC0 / 12;
 	auto noteIndex = halfStepsAboveC0 % 12;
 	return String(noteNames[noteIndex]) + String(octave);
+}
+
+void MusicalRingModAudioProcessorEditor::handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) {
+	DBG("hi");
+}
+
+void MusicalRingModAudioProcessorEditor::handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
+{
 }
