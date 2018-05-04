@@ -14,13 +14,13 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
     : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
 {
 
-    setSize (600, 400);
+    setSize (800, 400);
 
 	lfoFreqSliderLabel_.setText("Frequency:",dontSendNotification);
 	addAndMakeVisible(lfoFreqSliderLabel_);
 
 	lfoFreqSlider_.setSliderStyle(Slider::LinearVertical);
-	lfoFreqSlider_.setRange(0,10000,0.0);
+	//lfoFreqSlider_.setRange(0,10000,0.0);
 	lfoFreqSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), lfoFreqSlider_.getTextBoxHeight());
 	addAndMakeVisible(&lfoFreqSlider_);
 	lfoFreqSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider_));
@@ -35,11 +35,24 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	sliderSourceButton_.setRadioGroupId(FrequencySourceButtons);
 	sliderSourceButton_.setToggleState(!midiSourceButton_.getToggleState(),false);
 
+	// --------
+
+	offsetsLabel_.setText("Offsets:", dontSendNotification);
+	addAndMakeVisible(offsetsLabel_);
+
+	offsetsSlider_.setSliderStyle(Slider::IncDecButtons);
+	
+	offsetsSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, offsetsSlider_.getTextBoxWidth(), offsetsSlider_.getTextBoxHeight());
+	addAndMakeVisible(&offsetsSlider_);
+	offsetsSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_OFFSET, offsetsSlider_));
+
+	// --------
+
 	depthSliderLabel_.setText("Depth:", dontSendNotification);
 	addAndMakeVisible(depthSliderLabel_);
 
 	depthSlider_.setSliderStyle(Slider::LinearVertical);
-	depthSlider_.setRange(0, 1.0, 0.00);
+	//depthSlider_.setRange(0, 1.0, 0.00);
 	depthSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider_.getTextBoxWidth(), depthSlider_.getTextBoxHeight());
 	addAndMakeVisible(&depthSlider_);
 	depthSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider_));
@@ -119,11 +132,12 @@ void MusicalRingModAudioProcessorEditor::resized()
 	// margins
 	area.reduce(10, 10);	
 
-	auto paneAreaWidth = area.getWidth() / 3;
+	auto paneAreaWidth = area.getWidth() / 4;
 	auto paneMargin = 5;
 
 	auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
-	auto fArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+	auto offsetsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+	auto fLabelsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 	auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 
 	lfoFreqSliderLabel_.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
@@ -131,8 +145,11 @@ void MusicalRingModAudioProcessorEditor::resized()
 	sliderSourceButton_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
 	lfoFreqSlider_.setBounds(freqArea.reduced(20, 10));
 
-	fOutLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	auto fLeftArea = fArea.removeFromLeft(fArea.getWidth()/2);
+	offsetsLabel_.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
+	offsetsSlider_.setBounds(offsetsArea.reduced(20, 10));
+
+	fOutLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	auto fLeftArea = fLabelsArea.removeFromLeft(fLabelsArea.getWidth()/2);
 
 	fLabel_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	fcLabel_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
@@ -144,15 +161,15 @@ void MusicalRingModAudioProcessorEditor::resized()
 	f4Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	f5Label_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 
-	fValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	fcValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	fValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	fcValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 
-	f0ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	f1ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	f2ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	f3ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	f4ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
-	f5ValueLabel_.setBounds(fArea.removeFromTop(40).reduced(0, 10));
+	f0ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	f1ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	f2ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	f3ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	f4ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+	f5ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 
 	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
 	depthSlider_.setBounds(depthArea.reduced(20, 10));

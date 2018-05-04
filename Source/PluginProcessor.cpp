@@ -42,6 +42,15 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			return text.getFloatValue();
 		});
 
+	parameters.createAndAddParameter(PID_OFFSET, // parameter ID
+		"Offset", // paramter Name
+		String("semitones"), // parameter label (suffix)
+		NormalisableRange<float>(-64, 64, 1), //range
+		0.0f, // default value
+		nullptr,
+		nullptr
+		);
+
 	parameters.createAndAddParameter(PID_DEPTH, // parameter ID
 		"Modulation Depth", // paramter Name
 		String("%"), // parameter label (suffix)

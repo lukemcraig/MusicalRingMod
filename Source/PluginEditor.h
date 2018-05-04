@@ -41,6 +41,10 @@ private:
 	std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment_;
 	Label lfoFreqSliderLabel_;
 
+	Slider offsetsSlider_;
+	std::unique_ptr<SliderAttachment> offsetsSliderAttachment_;
+	Label offsetsLabel_;
+
 	Label fOutLabel_;
 
 	Label fLabel_;
