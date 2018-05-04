@@ -69,7 +69,8 @@ public:
 	float midiFreq_;
 	int midiNote_;
 private:
-	AudioProcessorValueTreeState parameters;
+	AudioProcessorValueTreeState parameters_;
+	MidiKeyboardState keyboardState_;
 
 	float sampleRate_;
 	float lfoInstantPhase_;

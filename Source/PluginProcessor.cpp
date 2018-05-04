@@ -21,15 +21,15 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
                      #endif
                        ),
 #endif
-	parameters(*this, nullptr)
-{
+	parameters_(*this, nullptr)
+{	
 	lfoInstantPhase_ = 0.0f;
 	midiFreqOffsetted_ = 0.0f;	
 	midiNote_ = 0;
 	midiFreq_ = 0;
 	midiFreqOffsetted_ = 0;
 
-	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
+	parameters_.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 10000.0f,0,0.5f), //range
@@ -42,7 +42,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters.createAndAddParameter(PID_OFFSET_OCTAVES, // parameter ID
+	parameters_.createAndAddParameter(PID_OFFSET_OCTAVES, // parameter ID
 		"Octaves", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-10, 10, 1), //range
@@ -55,7 +55,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters.createAndAddParameter(PID_OFFSET_SEMITONES, // parameter ID
+	parameters_.createAndAddParameter(PID_OFFSET_SEMITONES, // parameter ID
 		"Semitones", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-100, 100, 1), //range
@@ -68,7 +68,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters.createAndAddParameter(PID_OFFSET_CENTS, // parameter ID
+	parameters_.createAndAddParameter(PID_OFFSET_CENTS, // parameter ID
 		"Cents", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-100, 100, 1), //range
@@ -81,7 +81,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters.createAndAddParameter(PID_DEPTH, // parameter ID
+	parameters_.createAndAddParameter(PID_DEPTH, // parameter ID
 		"Modulation Depth", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
@@ -96,7 +96,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			// text to value function (C++11 lambda)			
 			return text.getFloatValue()*0.01;
 		});
-	parameters.createAndAddParameter(PID_TOGGLE_MIDI_SOURCE, // parameter ID
+	parameters_.createAndAddParameter(PID_TOGGLE_MIDI_SOURCE, // parameter ID
 		"Freq Source", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
@@ -114,7 +114,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			return 0.0f;
 		});
 
-	parameters.createAndAddParameter(PID_STANDARD, // parameter ID
+	parameters_.createAndAddParameter(PID_STANDARD, // parameter ID
 		"Pitch Standard", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(300.0f, 500.0f, 0.1f), //range
@@ -127,15 +127,15 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters.state = ValueTree(Identifier("RingModParameters"));
+	parameters_.state = ValueTree(Identifier("RingModParameters"));
 
-	parameterLfofreq_	= parameters.getRawParameterValue(PID_LFO_FREQ);
-	parameterOctave_	= parameters.getRawParameterValue(PID_OFFSET_OCTAVES);
-	parameterSemitone_	= parameters.getRawParameterValue(PID_OFFSET_SEMITONES);
-	parameterCents_		= parameters.getRawParameterValue(PID_OFFSET_CENTS);
-	parameterDepth_		= parameters.getRawParameterValue(PID_DEPTH);
-	parameterSource_	= parameters.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE);
-	parameterStandard_	= parameters.getRawParameterValue(PID_STANDARD);
+	parameterLfofreq_	= parameters_.getRawParameterValue(PID_LFO_FREQ);
+	parameterOctave_	= parameters_.getRawParameterValue(PID_OFFSET_OCTAVES);
+	parameterSemitone_	= parameters_.getRawParameterValue(PID_OFFSET_SEMITONES);
+	parameterCents_		= parameters_.getRawParameterValue(PID_OFFSET_CENTS);
+	parameterDepth_		= parameters_.getRawParameterValue(PID_DEPTH);
+	parameterSource_	= parameters_.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE);
+	parameterStandard_	= parameters_.getRawParameterValue(PID_STANDARD);
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -277,7 +277,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 	for (int sample = 0; sample < numSamples; ++sample) {
 		float in = channelData[sample];
 
-		float depth = *parameters.getRawParameterValue(PID_DEPTH);
+		float depth = *parameters_.getRawParameterValue(PID_DEPTH);
 		// m[n] = 1 - a + a * cos(n * wc)
 		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
 		// y[n]= m[n] * x[n]
@@ -316,14 +316,14 @@ bool MusicalRingModAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()
 {
-    return new MusicalRingModAudioProcessorEditor (*this, parameters);
+    return new MusicalRingModAudioProcessorEditor (*this, parameters_, keyboardState_);
 }
 
 //==============================================================================
 void MusicalRingModAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // store parameters
-	ScopedPointer<XmlElement> xml(parameters.state.createXml());
+	ScopedPointer<XmlElement> xml(parameters_.state.createXml());
 	copyXmlToBinary(*xml, destData);
 }
 
@@ -333,8 +333,8 @@ void MusicalRingModAudioProcessor::setStateInformation (const void* data, int si
 	ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
 	if (xmlState != nullptr)
-		if (xmlState->hasTagName(parameters.state.getType()))
-			parameters.state = ValueTree::fromXml(*xmlState);
+		if (xmlState->hasTagName(parameters_.state.getType()))
+			parameters_.state = ValueTree::fromXml(*xmlState);
 }
 
 //==============================================================================

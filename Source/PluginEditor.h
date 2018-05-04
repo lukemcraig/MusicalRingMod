@@ -21,7 +21,7 @@ public:
 	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
-    MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor&, AudioProcessorValueTreeState&);
+    MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor&, AudioProcessorValueTreeState&, MidiKeyboardState&);
 	void setupFLabels();
     ~MusicalRingModAudioProcessorEditor();
 
@@ -95,6 +95,9 @@ private:
 	String frequencyToNoteName(double f);
 
 	const std::string noteNames[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+	MidiKeyboardComponent keyboard_;
+	MidiKeyboardState& keyboardState_;
 	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MusicalRingModAudioProcessorEditor)
 };

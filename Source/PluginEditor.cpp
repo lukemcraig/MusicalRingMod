@@ -10,11 +10,11 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), processor (p), valueTreeState(vts)
+MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor& p, AudioProcessorValueTreeState& vts, MidiKeyboardState& ks)
+    : AudioProcessorEditor (&p), processor (p), valueTreeState(vts), keyboardState_(ks), keyboard_(ks, MidiKeyboardComponent::horizontalKeyboard)
 {
 
-    setSize (800, 400);
+    setSize (800, 600);
 
 	lfoFreqSliderLabel_.setText("Frequency:",dontSendNotification);
 	addAndMakeVisible(lfoFreqSliderLabel_);
@@ -72,6 +72,9 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	depthSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider_));
 
 	setupFLabels();
+
+
+	addAndMakeVisible(keyboard_);
 
 	startTimerHz(30);
 }
@@ -154,10 +157,14 @@ void MusicalRingModAudioProcessorEditor::resized()
 	auto paneAreaWidth = area.getWidth() / 4;
 	auto paneMargin = 5;
 
+	auto keyboardArea = area.removeFromBottom(100);
+
 	auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 	auto offsetsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 	auto fLabelsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 	auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+
+
 
 	lfoFreqSliderLabel_.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
 	midiSourceButton_.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
@@ -174,6 +181,8 @@ void MusicalRingModAudioProcessorEditor::resized()
 
 	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
 	depthSlider_.setBounds(depthArea.reduced(20, 10));
+
+	keyboard_.setBounds(keyboardArea);
 }
 
 void MusicalRingModAudioProcessorEditor::layoutFLabels(juce::Rectangle<int> &fLabelsArea)
