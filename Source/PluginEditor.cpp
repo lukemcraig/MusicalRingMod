@@ -178,9 +178,9 @@ void MusicalRingModAudioProcessorEditor::resized()
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {	
 	if(*valueTreeState.getRawParameterValue(processor.PID_TOGGLE) == 1.0f)
-		lfoFreqSlider_.setValue(processor.midiNumber_);
+		lfoFreqSlider_.setValue(processor.midiFreqOffsetted_);
 	// assuming the midi input is the input signal's fundamental frequency
-	auto f = processor.midiNumber_;
+	auto f = processor.midiFreq_;
 	auto fc = lfoFreqSlider_.getValue();
 
 	fValueLabel_.setText(String(f)		+ "Hz,  " + frequencyToNoteName(f), dontSendNotification);

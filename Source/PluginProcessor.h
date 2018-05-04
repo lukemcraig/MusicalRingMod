@@ -30,6 +30,8 @@ public:
 
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
 
+	float convertMIDIToHz(float noteNumber, float semiToneOffset, float a4);
+
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
@@ -59,12 +61,15 @@ public:
 	const String PID_DEPTH = "depth";
 	const String PID_TOGGLE = "toggle";
 	//==============================================================================
-	float midiNumber_;
+	float midiFreqOffsetted_;
+	float midiFreq_;
 private:
 	AudioProcessorValueTreeState parameters;
 
 	float sampleRate_;
 	float lfoInstantPhase_;
+
+
 
     //==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
