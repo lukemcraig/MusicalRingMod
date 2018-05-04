@@ -28,32 +28,46 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 
 	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
-		String("Hz"), // parameter label (suffix)
+		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 10000.0f,0,0.5f), //range
 		20.0f, // default value
 		[](float value)
 		{
 			// value to text function (C++11 lambda)
-			return String(value,3) ;
+			return String(value,3) + String("Hz");
 		},
-		[](const String& text)
-		{
-			// text to value function (C++11 lambda)			
-			return text.getFloatValue();
-		});
+		nullptr
+		);
 
-	parameters.createAndAddParameter(PID_OFFSET, // parameter ID
-		"Offset", // paramter Name
-		String("semitones"), // parameter label (suffix)
+	parameters.createAndAddParameter(PID_OFFSET_SEMITONES, // parameter ID
+		"Semitones", // paramter Name
+		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-64, 64, 1), //range
-		0.0f, // default value
-		nullptr,
+		0, // default value
+		[](float value)
+		{
+		// value to text function (C++11 lambda)
+		return String(value, 0) + String(" semitones");
+		},
+		nullptr
+		);
+
+	parameters.createAndAddParameter(PID_OFFSET_CENTS, // parameter ID
+		"Cents", // paramter Name
+		String(""), // parameter label (suffix)
+		NormalisableRange<float>(-100, 100, 1), //range
+		0, // default value
+		[](float value)
+		{
+		// value to text function (C++11 lambda)
+		return String(value, 0) + String(" cents");
+		},
 		nullptr
 		);
 
 	parameters.createAndAddParameter(PID_DEPTH, // parameter ID
 		"Modulation Depth", // paramter Name
-		String("%"), // parameter label (suffix)
+		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
 		1.0f, // default value
 		[](float value)
@@ -209,7 +223,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			// convert the midi number to Hz, assuming A is 440Hz
 			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, 440);
-			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), *parameters.getRawParameterValue(PID_OFFSET), 440);	
+			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), *parameters.getRawParameterValue(PID_OFFSET_SEMITONES), 440);	
 		}
 	}
 

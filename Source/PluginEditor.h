@@ -22,11 +22,13 @@ public:
 	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
     MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor&, AudioProcessorValueTreeState&);
+	void setupFLabels();
     ~MusicalRingModAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
+	void layoutFLabels(juce::Rectangle<int> &fLabelsArea);
 	void timerCallback() override;
 	
 
@@ -41,9 +43,14 @@ private:
 	std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment_;
 	Label lfoFreqSliderLabel_;
 
-	Slider offsetsSlider_;
-	std::unique_ptr<SliderAttachment> offsetsSliderAttachment_;
 	Label offsetsLabel_;
+
+	Slider offsetSemitoneSlider_;
+	std::unique_ptr<SliderAttachment> offsetSemitoneSliderAttachment_;
+
+	Slider offsetCentsSlider_;
+	std::unique_ptr<SliderAttachment> offsetCentsSliderAttachment_;
+
 
 	Label fOutLabel_;
 

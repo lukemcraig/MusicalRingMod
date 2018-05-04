@@ -40,11 +40,15 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	offsetsLabel_.setText("Offsets:", dontSendNotification);
 	addAndMakeVisible(offsetsLabel_);
 
-	offsetsSlider_.setSliderStyle(Slider::IncDecButtons);
-	
-	offsetsSlider_.setTextBoxStyle(Slider::TextBoxBelow, false, offsetsSlider_.getTextBoxWidth(), offsetsSlider_.getTextBoxHeight());
-	addAndMakeVisible(&offsetsSlider_);
-	offsetsSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_OFFSET, offsetsSlider_));
+	offsetSemitoneSlider_.setSliderStyle(Slider::IncDecButtons);	
+	offsetSemitoneSlider_.setTextBoxStyle(Slider::TextBoxAbove, false, offsetSemitoneSlider_.getTextBoxWidth(), offsetSemitoneSlider_.getTextBoxHeight());
+	addAndMakeVisible(&offsetSemitoneSlider_);
+	offsetSemitoneSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_OFFSET_SEMITONES, offsetSemitoneSlider_));
+
+	offsetCentsSlider_.setSliderStyle(Slider::IncDecButtons);
+	offsetCentsSlider_.setTextBoxStyle(Slider::TextBoxAbove, false, offsetCentsSlider_.getTextBoxWidth(), offsetCentsSlider_.getTextBoxHeight());
+	addAndMakeVisible(&offsetCentsSlider_);
+	offsetCentsSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_OFFSET_CENTS, offsetCentsSlider_));
 
 	// --------
 
@@ -57,6 +61,13 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(&depthSlider_);
 	depthSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider_));
 
+	setupFLabels();
+
+	startTimerHz(30);
+}
+
+void MusicalRingModAudioProcessorEditor::setupFLabels()
+{
 	fOutLabel_.setText("Output Frequencies:", dontSendNotification);
 	addAndMakeVisible(fOutLabel_);
 
@@ -107,8 +118,6 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 
 	f5ValueLabel_.setText("", dontSendNotification);
 	addAndMakeVisible(f5ValueLabel_);
-
-	startTimerHz(30);
 }
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
@@ -146,10 +155,19 @@ void MusicalRingModAudioProcessorEditor::resized()
 	lfoFreqSlider_.setBounds(freqArea.reduced(20, 10));
 
 	offsetsLabel_.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
-	offsetsSlider_.setBounds(offsetsArea.reduced(20, 10));
+	offsetSemitoneSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+	offsetCentsSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 
+	layoutFLabels(fLabelsArea);
+
+	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
+	depthSlider_.setBounds(depthArea.reduced(20, 10));
+}
+
+void MusicalRingModAudioProcessorEditor::layoutFLabels(juce::Rectangle<int> &fLabelsArea)
+{
 	fOutLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-	auto fLeftArea = fLabelsArea.removeFromLeft(fLabelsArea.getWidth()/2);
+	auto fLeftArea = fLabelsArea.removeFromLeft(fLabelsArea.getWidth() / 2);
 
 	fLabel_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 	fcLabel_.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
@@ -170,19 +188,18 @@ void MusicalRingModAudioProcessorEditor::resized()
 	f3ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 	f4ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 	f5ValueLabel_.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-
-	depthSliderLabel_.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
-	depthSlider_.setBounds(depthArea.reduced(20, 10));
 }
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {	
 	if (*valueTreeState.getRawParameterValue(processor.PID_TOGGLE_MIDI_SOURCE) == 1.0f) {
 		lfoFreqSlider_.setValue(processor.midiFreqOffsetted_);
-		offsetsSlider_.setVisible(true);
+		offsetSemitoneSlider_.setVisible(true);
+		offsetCentsSlider_.setVisible(true);
 	}
 	else {
-		offsetsSlider_.setVisible(false);
+		offsetSemitoneSlider_.setVisible(false);
+		offsetCentsSlider_.setVisible(false);
 	}
 	// assuming the midi input is the input signal's fundamental frequency
 	auto f = processor.midiFreq_;
