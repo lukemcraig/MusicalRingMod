@@ -45,6 +45,9 @@ private:
 
 	Label offsetsLabel_;
 
+	Slider offsetOctaveSlider_;
+	std::unique_ptr<SliderAttachment> offsetOctaveSliderAttachment_;
+
 	Slider offsetSemitoneSlider_;
 	std::unique_ptr<SliderAttachment> offsetSemitoneSliderAttachment_;
 

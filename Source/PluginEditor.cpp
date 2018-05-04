@@ -40,6 +40,11 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	offsetsLabel_.setText("Offsets:", dontSendNotification);
 	addAndMakeVisible(offsetsLabel_);
 
+	offsetOctaveSlider_.setSliderStyle(Slider::IncDecButtons);
+	offsetOctaveSlider_.setTextBoxStyle(Slider::TextBoxAbove, false, offsetOctaveSlider_.getTextBoxWidth(), offsetOctaveSlider_.getTextBoxHeight());
+	addAndMakeVisible(&offsetOctaveSlider_);
+	offsetOctaveSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_OFFSET_OCTAVES, offsetOctaveSlider_));
+	
 	offsetSemitoneSlider_.setSliderStyle(Slider::IncDecButtons);	
 	offsetSemitoneSlider_.setTextBoxStyle(Slider::TextBoxAbove, false, offsetSemitoneSlider_.getTextBoxWidth(), offsetSemitoneSlider_.getTextBoxHeight());
 	addAndMakeVisible(&offsetSemitoneSlider_);
@@ -155,6 +160,7 @@ void MusicalRingModAudioProcessorEditor::resized()
 	lfoFreqSlider_.setBounds(freqArea.reduced(20, 10));
 
 	offsetsLabel_.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
+	offsetOctaveSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 	offsetSemitoneSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 	offsetCentsSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 
@@ -196,10 +202,12 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 		lfoFreqSlider_.setValue(processor.midiFreqOffsetted_);
 		offsetSemitoneSlider_.setVisible(true);
 		offsetCentsSlider_.setVisible(true);
+		offsetOctaveSlider_.setVisible(true);
 	}
 	else {
 		offsetSemitoneSlider_.setVisible(false);
 		offsetCentsSlider_.setVisible(false);
+		offsetOctaveSlider_.setVisible(false);
 	}
 	// assuming the midi input is the input signal's fundamental frequency
 	auto f = processor.midiFreq_;

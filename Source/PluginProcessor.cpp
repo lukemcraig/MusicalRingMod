@@ -39,10 +39,23 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
+	parameters.createAndAddParameter(PID_OFFSET_OCTAVES, // parameter ID
+		"Octaves", // paramter Name
+		String(""), // parameter label (suffix)
+		NormalisableRange<float>(-10, 10, 1), //range
+		0, // default value
+		[](float value)
+		{
+		// value to text function (C++11 lambda)
+		return String(value, 0) + String(" octaves");
+		},
+		nullptr
+		);
+
 	parameters.createAndAddParameter(PID_OFFSET_SEMITONES, // parameter ID
 		"Semitones", // paramter Name
 		String(""), // parameter label (suffix)
-		NormalisableRange<float>(-64, 64, 1), //range
+		NormalisableRange<float>(-100, 100, 1), //range
 		0, // default value
 		[](float value)
 		{
@@ -223,7 +236,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		{
 			// convert the midi number to Hz, assuming A is 440Hz
 			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, 440);
-			auto semitoneOffset = *parameters.getRawParameterValue(PID_OFFSET_SEMITONES) + (*parameters.getRawParameterValue(PID_OFFSET_CENTS)*.01);
+			auto semitoneOffset = (*parameters.getRawParameterValue(PID_OFFSET_OCTAVES)*12) + *parameters.getRawParameterValue(PID_OFFSET_SEMITONES) + (*parameters.getRawParameterValue(PID_OFFSET_CENTS)*.01);
 			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), semitoneOffset, 440);
 		}
 	}

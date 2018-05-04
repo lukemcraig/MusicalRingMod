@@ -57,6 +57,7 @@ public:
 
 	//==============================================================================
 	const String PID_LFO_FREQ = "lfofreq";
+	const String PID_OFFSET_OCTAVES = "octaves";
 	const String PID_OFFSET_SEMITONES = "semitones";
 	const String PID_OFFSET_CENTS = "cents";
 	const String PID_DEPTH = "depth";
