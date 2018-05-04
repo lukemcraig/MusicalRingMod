@@ -210,7 +210,6 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			// convert the midi number to Hz, assuming A is 440Hz
 			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, 440);
 			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), *parameters.getRawParameterValue(PID_OFFSET), 440);	
-
 		}
 	}
 
@@ -247,6 +246,11 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 float MusicalRingModAudioProcessor::convertMIDIToHz(float noteNumber, float semiToneOffset, float a4)
 {
 	return a4 * pow(2.0f, (noteNumber + semiToneOffset - 69.0f) / 12.0f);
+}
+
+float MusicalRingModAudioProcessor::addSemitoneToHz(float originalFreq, float semiToneOffset, float a4)
+{
+	return exp(semiToneOffset*log(2)/12.0) * originalFreq;
 }
 
 //==============================================================================

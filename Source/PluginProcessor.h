@@ -32,6 +32,8 @@ public:
 
 	float convertMIDIToHz(float noteNumber, float semiToneOffset, float a4);
 
+	float addSemitoneToHz(float originalFreq, float semiToneOffset, float a4);
+
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
