@@ -24,7 +24,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 	parameters(*this, nullptr)
 {
 	lfoInstantPhase_ = 0.0f;
-	midiFreqOffsetted_ = 0.0f;
+	midiFreqOffsetted_ = 0.0f;	
 
 	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
@@ -125,6 +125,14 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		);
 
 	parameters.state = ValueTree(Identifier("RingModParameters"));
+
+	parameterLfofreq_	= parameters.getRawParameterValue(PID_LFO_FREQ);
+	parameterOctave_	= parameters.getRawParameterValue(PID_OFFSET_OCTAVES);
+	parameterSemitone_	= parameters.getRawParameterValue(PID_OFFSET_SEMITONES);
+	parameterCents_		= parameters.getRawParameterValue(PID_OFFSET_CENTS);
+	parameterDepth_		= parameters.getRawParameterValue(PID_DEPTH);
+	parameterSource_	= parameters.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE);
+	parameterStandard_	= parameters.getRawParameterValue(PID_STANDARD);
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -248,10 +256,10 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		if (mResult.isNoteOn())
 		{
 			// convert the midi number to Hz, assuming A is 440Hz
-			auto reference = *parameters.getRawParameterValue(PID_STANDARD);
-			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, reference);
-			auto semitoneOffset = (*parameters.getRawParameterValue(PID_OFFSET_OCTAVES)*12) + *parameters.getRawParameterValue(PID_OFFSET_SEMITONES) + (*parameters.getRawParameterValue(PID_OFFSET_CENTS)*.01);
-			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), semitoneOffset, reference);
+			/*auto reference = *parameters.getRawParameterValue(PID_STANDARD);*/
+			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, *parameterStandard_);
+			auto semitoneOffset = (*parameterOctave_*12) + *parameterSemitone_ + (*parameterCents_*.01);
+			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), semitoneOffset, *parameterStandard_);
 		}
 	}
 
@@ -272,8 +280,8 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			buffer.getWritePointer(channel)[sample] = out;
 		}
 		float lfoFreq = midiFreqOffsetted_ ;
-		if (*parameters.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE) == 0.0f) {
-			lfoFreq = *parameters.getRawParameterValue(PID_LFO_FREQ);
+		if (*parameterSource_== 0.0f) {
+			lfoFreq = *parameterLfofreq_;
 		}
 		//DBG(lfoFreq);
 		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);

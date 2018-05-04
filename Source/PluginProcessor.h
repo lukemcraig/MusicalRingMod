@@ -73,6 +73,14 @@ private:
 	float sampleRate_;
 	float lfoInstantPhase_;
 
+	float* parameterLfofreq_	= nullptr;
+	float* parameterOctave_		= nullptr;
+	float* parameterSemitone_	= nullptr;
+	float* parameterCents_		= nullptr;
+	float* parameterDepth_		= nullptr;
+	float* parameterSource_		= nullptr;
+	float* parameterStandard_	= nullptr;
+
 
 
     //==============================================================================

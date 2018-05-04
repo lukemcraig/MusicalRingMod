@@ -209,11 +209,13 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 		offsetSemitoneSlider_.setVisible(true);
 		offsetCentsSlider_.setVisible(true);
 		offsetOctaveSlider_.setVisible(true);
+		standardSlider_.setVisible(true);
 	}
 	else {
 		offsetSemitoneSlider_.setVisible(false);
 		offsetCentsSlider_.setVisible(false);
 		offsetOctaveSlider_.setVisible(false);
+		standardSlider_.setVisible(false);
 	}
 	// assuming the midi input is the input signal's fundamental frequency
 	auto f = processor.midiFreq_;
