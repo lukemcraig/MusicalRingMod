@@ -55,6 +55,11 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
 	addAndMakeVisible(&offsetCentsSlider_);
 	offsetCentsSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_OFFSET_CENTS, offsetCentsSlider_));
 
+	standardSlider_.setSliderStyle(Slider::IncDecButtons);
+	standardSlider_.setTextBoxStyle(Slider::TextBoxAbove, false, standardSlider_.getTextBoxWidth(), standardSlider_.getTextBoxHeight());
+	addAndMakeVisible(&standardSlider_);
+	standardSliderAttachment_.reset(new SliderAttachment(valueTreeState, processor.PID_STANDARD, standardSlider_));
+
 	// --------
 
 	depthSliderLabel_.setText("Depth:", dontSendNotification);
@@ -163,6 +168,7 @@ void MusicalRingModAudioProcessorEditor::resized()
 	offsetOctaveSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 	offsetSemitoneSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 	offsetCentsSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+	standardSlider_.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
 
 	layoutFLabels(fLabelsArea);
 

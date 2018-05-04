@@ -111,6 +111,19 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			return 0.0f;
 		});
 
+	parameters.createAndAddParameter(PID_STANDARD, // parameter ID
+		"Pitch Standard", // paramter Name
+		String(""), // parameter label (suffix)
+		NormalisableRange<float>(300.0f, 500.0f, 0.1f), //range
+		440.0f, // default value
+		[](float value)
+		{
+		// value to text function (C++11 lambda)
+		return String(value, 1) + String("Hz");
+		},
+		nullptr
+		);
+
 	parameters.state = ValueTree(Identifier("RingModParameters"));
 }
 
@@ -235,9 +248,10 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		if (mResult.isNoteOn())
 		{
 			// convert the midi number to Hz, assuming A is 440Hz
-			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, 440);
+			auto reference = *parameters.getRawParameterValue(PID_STANDARD);
+			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, reference);
 			auto semitoneOffset = (*parameters.getRawParameterValue(PID_OFFSET_OCTAVES)*12) + *parameters.getRawParameterValue(PID_OFFSET_SEMITONES) + (*parameters.getRawParameterValue(PID_OFFSET_CENTS)*.01);
-			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), semitoneOffset, 440);
+			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), semitoneOffset, reference);
 		}
 	}
 

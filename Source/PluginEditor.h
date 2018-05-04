@@ -54,6 +54,8 @@ private:
 	Slider offsetCentsSlider_;
 	std::unique_ptr<SliderAttachment> offsetCentsSliderAttachment_;
 
+	Slider standardSlider_;
+	std::unique_ptr<SliderAttachment> standardSliderAttachment_;
 
 	Label fOutLabel_;
 

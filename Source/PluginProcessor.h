@@ -62,6 +62,7 @@ public:
 	const String PID_OFFSET_CENTS = "cents";
 	const String PID_DEPTH = "depth";
 	const String PID_TOGGLE_MIDI_SOURCE = "toggle";
+	const String PID_STANDARD = "standard";	
 	
 	//==============================================================================
 	float midiFreqOffsetted_;
