@@ -25,6 +25,9 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 {
 	lfoInstantPhase_ = 0.0f;
 	midiFreqOffsetted_ = 0.0f;	
+	midiNote_ = 0;
+	midiFreq_ = 0;
+	midiFreqOffsetted_ = 0;
 
 	parameters.createAndAddParameter(PID_LFO_FREQ, // parameter ID
 		"LFO Frequency", // paramter Name
@@ -255,12 +258,19 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 	{
 		if (mResult.isNoteOn())
 		{
-			// convert the midi number to Hz, assuming A is 440Hz
-			/*auto reference = *parameters.getRawParameterValue(PID_STANDARD);*/
-			midiFreq_ = convertMIDIToHz(mResult.getNoteNumber(), 0, *parameterStandard_);
-			auto semitoneOffset = (*parameterOctave_*12) + *parameterSemitone_ + (*parameterCents_*.01);
-			midiFreqOffsetted_ = convertMIDIToHz(mResult.getNoteNumber(), semitoneOffset, *parameterStandard_);
+			// convert the midi number to Hz			
+			midiNote_ = mResult.getNoteNumber();
 		}
+	}
+
+	if (midiNote_ != 0) {
+		midiFreq_ = convertMIDIToHz(midiNote_, 0, *parameterStandard_);
+		auto semitoneOffset = (*parameterOctave_ * 12) + *parameterSemitone_ + (*parameterCents_*.01);
+		midiFreqOffsetted_ = convertMIDIToHz(midiNote_, semitoneOffset, *parameterStandard_);
+	}
+	else {
+		midiFreq_ = 0;
+		midiFreqOffsetted_ = 0;
 	}
 
 	auto* channelData = buffer.getWritePointer(0);

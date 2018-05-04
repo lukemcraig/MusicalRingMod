@@ -67,6 +67,7 @@ public:
 	//==============================================================================
 	float midiFreqOffsetted_;
 	float midiFreq_;
+	int midiNote_;
 private:
 	AudioProcessorValueTreeState parameters;
 
