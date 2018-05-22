@@ -254,31 +254,33 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-	MidiMessage mResult;
-	int mSamplePosition;
-	for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(mResult, mSamplePosition);)
-	{
-		if (mResult.isNoteOn())
-		{
-			// convert the midi number to Hz			
-			midiNote_ = mResult.getNoteNumber();
-			
-		}
-	}
-
-	if (midiNote_ != 0) {
-		midiFreq_ = convertMIDIToHz(midiNote_, 0, *parameterStandard_);
-		auto semitoneOffset = (*parameterOctave_ * 12) + *parameterSemitone_ + (*parameterCents_*.01);
-		midiFreqOffsetted_ = convertMIDIToHz(midiNote_, semitoneOffset, *parameterStandard_);
-	}
-	else {
-		midiFreq_ = 0;
-		midiFreqOffsetted_ = 0;
-	}
-
 	auto* channelData = buffer.getWritePointer(0);
 	for (int sample = 0; sample < numSamples; ++sample) {
 		float in = channelData[sample];
+
+		MidiMessage mResult;
+		int mSamplePosition;
+		for (MidiBuffer::Iterator i(midiMessages); i.getNextEvent(mResult, mSamplePosition);)
+		{
+			if (mSamplePosition < sample)
+				continue;
+			if (mSamplePosition > sample)
+				break;
+
+			if (mResult.isNoteOn())
+			{
+				midiNote_ = mResult.getNoteNumber();				
+			}
+		}
+		if (midiNote_ != 0) {
+			midiFreq_ = convertMIDIToHz(midiNote_, 0, *parameterStandard_);
+			auto semitoneOffset = (*parameterOctave_ * 12) + *parameterSemitone_ + (*parameterCents_*.01);
+			midiFreqOffsetted_ = convertMIDIToHz(midiNote_, semitoneOffset, *parameterStandard_);
+		}
+		else {
+			midiFreq_ = 0;
+			midiFreqOffsetted_ = 0;
+		}
 
 		float depth = *parameters_.getRawParameterValue(PID_DEPTH);
 		// m[n] = 1 - a + a * cos(n * wc)
