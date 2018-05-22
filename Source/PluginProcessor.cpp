@@ -15,9 +15,11 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  AudioChannelSet::stereo(), true)
+						.withInput  ("Input #1",  AudioChannelSet::stereo(), true)
+						.withInput("Input #2", AudioChannelSet::stereo(), false)
                       #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
+		 .withOutput ("Output #1", AudioChannelSet::stereo(), true)
+		 .withOutput("Output #2", AudioChannelSet::stereo(), false)
                      #endif
                        ),
 #endif
@@ -256,9 +258,9 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
         buffer.clear (i, 0, buffer.getNumSamples());
 
 	float nextDepth = *parameterDepth_;
-	auto* channelData = buffer.getWritePointer(0);
+	
 	for (int sample = 0; sample < numSamples; ++sample) {
-		float in = channelData[sample];
+		
 
 		MidiMessage mResult;
 		int mSamplePosition;
@@ -287,16 +289,17 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		// linear interpolation to avoid clicks and pops on depth change
 		float depth = lerp(previousDepth_, nextDepth, float(sample+1)/float(numSamples));
 		// m[n] = 1 - a + a * cos(n * wc)
-		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
-		// y[n]= m[n] * x[n]
-		float out = carrier * in;
-		channelData[sample] = out;
+		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);		
 
-		//update the other channels with the same sample value
-		for (int channel = 1; channel < totalNumInputChannels; ++channel)
+		//update all the channels
+		for (int channel = 0; channel < totalNumInputChannels; ++channel)
 		{
-			buffer.getWritePointer(channel)[sample] = out;
+			auto* channelData = buffer.getWritePointer(channel);			
+			// y[n]= m[n] * x[n]		
+			
+			channelData[sample] = carrier * channelData[sample];
 		}
+
 		float lfoFreq = midiFreqOffsetted_ ;
 		if (*parameterSource_== 0.0f) {
 			lfoFreq = *parameterLfofreq_;
@@ -354,12 +357,13 @@ float MusicalRingModAudioProcessor::lerp(float y0, float y1, float t)
 
 void MusicalRingModAudioProcessor::handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
 {
-	DBG("Yo");
+	// TODO
 	midiNote_ = midiNoteNumber;
 }
 
 void MusicalRingModAudioProcessor::handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
 {
+	// TODO
 }
 
 //==============================================================================
