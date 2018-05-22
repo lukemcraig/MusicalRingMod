@@ -212,6 +212,7 @@ void MusicalRingModAudioProcessor::prepareToPlay (double sampleRate, int samples
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
 	sampleRate_ = sampleRate;
+	previousDepth_ = *parameterDepth_;
 }
 
 void MusicalRingModAudioProcessor::releaseResources()
@@ -254,6 +255,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+	float nextDepth = *parameterDepth_;
 	auto* channelData = buffer.getWritePointer(0);
 	for (int sample = 0; sample < numSamples; ++sample) {
 		float in = channelData[sample];
@@ -281,8 +283,9 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			midiFreq_ = 0;
 			midiFreqOffsetted_ = 0;
 		}
-
-		float depth = *parameters_.getRawParameterValue(PID_DEPTH);
+		
+		// linear interpolation to avoid clicks and pops on depth change
+		float depth = lerp(previousDepth_, nextDepth, float(sample+1)/float(numSamples));
 		// m[n] = 1 - a + a * cos(n * wc)
 		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);
 		// y[n]= m[n] * x[n]
@@ -306,6 +309,7 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 		}
 		jassert(lfoInstantPhase_<1.0f);
 	}
+	previousDepth_ = nextDepth;
 }
 
 float MusicalRingModAudioProcessor::convertMIDIToHz(float noteNumber, float semiToneOffset, float a4)
@@ -340,6 +344,12 @@ void MusicalRingModAudioProcessor::setStateInformation (const void* data, int si
 	if (xmlState != nullptr)
 		if (xmlState->hasTagName(parameters_.state.getType()))
 			parameters_.state = ValueTree::fromXml(*xmlState);
+}
+
+float MusicalRingModAudioProcessor::lerp(float y0, float y1, float t)
+{
+
+	return y0+t*(y1-y0);
 }
 
 void MusicalRingModAudioProcessor::handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)

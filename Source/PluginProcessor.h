@@ -84,6 +84,9 @@ private:
 	float* parameterSource_		= nullptr;
 	float* parameterStandard_	= nullptr;
 
+	float previousDepth_;
+
+	float lerp(float y0,float y1,float t);
 
 	// Inherited via MidiKeyboardStateListener
 	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
