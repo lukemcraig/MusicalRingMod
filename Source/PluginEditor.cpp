@@ -13,8 +13,8 @@
 MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRingModAudioProcessor& p,
                                                                        AudioProcessorValueTreeState& vts,
                                                                        MidiKeyboardState& ks)
-    : AudioProcessorEditor(&p), processor(p), valueTreeState(vts), keyboardState(ks),
-      keyboard(ks, MidiKeyboardComponent::horizontalKeyboard)
+    : AudioProcessorEditor(&p), valueTreeState(vts), processor(p), 
+      keyboard(ks, MidiKeyboardComponent::horizontalKeyboard), keyboardState(ks)
 {
     setSize(800, 600);
 
