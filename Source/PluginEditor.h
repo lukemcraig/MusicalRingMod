@@ -14,26 +14,27 @@
 //==============================================================================
 /**
 */
-class MusicalRingModAudioProcessorEditor  : public AudioProcessorEditor,
-	private Timer,
-	private MidiKeyboardStateListener
+class MusicalRingModAudioProcessorEditor : public AudioProcessorEditor,
+                                           private Timer,
+                                           private MidiKeyboardStateListener
 {
 public:
-	typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
-	typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
+    typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
-    MusicalRingModAudioProcessorEditor (MusicalRingModAudioProcessor&, AudioProcessorValueTreeState&, MidiKeyboardState&);
-	void setupFLabels();
+    MusicalRingModAudioProcessorEditor(MusicalRingModAudioProcessor&, AudioProcessorValueTreeState&,
+                                       MidiKeyboardState&);
+    void setupFLabels();
     ~MusicalRingModAudioProcessorEditor();
 
     //==============================================================================
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
-	void layoutFLabels(juce::Rectangle<int> &fLabelsArea);
-	void timerCallback() override;	
+    void layoutFLabels(juce::Rectangle<int>& fLabelsArea);
+    void timerCallback() override;
 
-private:	
-	AudioProcessorValueTreeState& valueTreeState;
+private:
+    AudioProcessorValueTreeState& valueTreeState;
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     MusicalRingModAudioProcessor& processor;
@@ -45,62 +46,62 @@ private:
     Label offsetsLabel;
 
     Slider offsetOctaveSlider;
-	std::unique_ptr<SliderAttachment> offsetOctaveSliderAttachment;
+    std::unique_ptr<SliderAttachment> offsetOctaveSliderAttachment;
 
-	Slider offsetSemitoneSlider;
-	std::unique_ptr<SliderAttachment> offsetSemitoneSliderAttachment;
+    Slider offsetSemitoneSlider;
+    std::unique_ptr<SliderAttachment> offsetSemitoneSliderAttachment;
 
-	Slider offsetCentsSlider;
-	std::unique_ptr<SliderAttachment> offsetCentsSliderAttachment;
+    Slider offsetCentsSlider;
+    std::unique_ptr<SliderAttachment> offsetCentsSliderAttachment;
 
-	Slider standardSlider;
-	std::unique_ptr<SliderAttachment> standardSliderAttachment;
+    Slider standardSlider;
+    std::unique_ptr<SliderAttachment> standardSliderAttachment;
 
-	Label fOutLabel;
+    Label fOutLabel;
 
-	Label fLabel;
-	Label fcLabel;
+    Label fLabel;
+    Label fcLabel;
 
-	Label f0Label;
-	Label f1Label;
-	Label f2Label;
-	Label f3Label;
-	Label f4Label;
-	Label f5Label;
+    Label f0Label;
+    Label f1Label;
+    Label f2Label;
+    Label f3Label;
+    Label f4Label;
+    Label f5Label;
 
-	Label fValueLabel;
-	Label fcValueLabel;
+    Label fValueLabel;
+    Label fcValueLabel;
 
-	Label f0ValueLabel;
-	Label f1ValueLabel;
-	Label f2ValueLabel;
-	Label f3ValueLabel;
-	Label f4ValueLabel;
-	Label f5ValueLabel;
+    Label f0ValueLabel;
+    Label f1ValueLabel;
+    Label f2ValueLabel;
+    Label f3ValueLabel;
+    Label f4ValueLabel;
+    Label f5ValueLabel;
 
-	enum RadioButtonIds
-	{
-		frequencySourceButtons = 1001
-	};
+    enum RadioButtonIds
+    {
+        frequencySourceButtons = 1001
+    };
 
-	ToggleButton midiSourceButton;
-	std::unique_ptr<ButtonAttachment> freqToggleAttachment;
-	ToggleButton sliderSourceButton;
+    ToggleButton midiSourceButton;
+    std::unique_ptr<ButtonAttachment> freqToggleAttachment;
+    ToggleButton sliderSourceButton;
 
-	Slider depthSlider;
-	std::unique_ptr<SliderAttachment> depthSliderAttachment;
-	Label depthSliderLabel;
+    Slider depthSlider;
+    std::unique_ptr<SliderAttachment> depthSliderAttachment;
+    Label depthSliderLabel;
 
-	String frequencyToNoteName(double f) const;
+    String frequencyToNoteName(double f) const;
 
-	const std::string noteNames[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    const std::string noteNames[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
-	MidiKeyboardComponent keyboard;
-	MidiKeyboardState& keyboardState;    
+    MidiKeyboardComponent keyboard;
+    MidiKeyboardState& keyboardState;
 
-	// Inherited via MidiKeyboardStateListener
-	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
-	virtual void handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
+    // Inherited via MidiKeyboardStateListener
+    virtual void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
+    virtual void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
 };

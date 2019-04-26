@@ -13,8 +13,8 @@
 //==============================================================================
 /**
 */
-class MusicalRingModAudioProcessor  : public AudioProcessor, 
-	private MidiKeyboardStateListener
+class MusicalRingModAudioProcessor : public AudioProcessor,
+                                     private MidiKeyboardStateListener
 {
 public:
     //==============================================================================
@@ -22,16 +22,16 @@ public:
     ~MusicalRingModAudioProcessor();
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-   #ifndef JucePlugin_PreferredChannelConfigurations
-    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
-   #endif
+#ifndef JucePlugin_PreferredChannelConfigurations
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
+#endif
 
-    void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
+    void processBlock(AudioBuffer<float>&, MidiBuffer&) override;
 
-	float convertMIDIToHz(float noteNumber, float semiToneOffset, float a4);
+    float convertMidiToHz(float noteNumber, float semiToneOffset, float a4);
 
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
@@ -48,51 +48,51 @@ public:
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
-    void setCurrentProgram (int index) override;
-    const String getProgramName (int index) override;
-    void changeProgramName (int index, const String& newName) override;
+    void setCurrentProgram(int index) override;
+    const String getProgramName(int index) override;
+    void changeProgramName(int index, const String& newName) override;
 
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;
+    void getStateInformation(MemoryBlock& destData) override;
+    void setStateInformation(const void* data, int sizeInBytes) override;
 
-	//==============================================================================
-	const String pidLfoFreq = "lfoFreq";
-	const String pidOffsetOctaves = "octaves";
-	const String pidOffsetSemitones = "semitones";
-	const String pidOffsetCents = "cents";
-	const String pidDepth = "depth";
-	const String pidToggleMidiSource = "toggle";
-	const String pidStandard = "standard";	
-	
-	//==============================================================================
-	float midiFreqAndOffset;
-	float midiFreq;
-	int midiNote;
+    //==============================================================================
+    const String pidLfoFreq = "lfoFreq";
+    const String pidOffsetOctaves = "octaves";
+    const String pidOffsetSemitones = "semitones";
+    const String pidOffsetCents = "cents";
+    const String pidDepth = "depth";
+    const String pidToggleMidiSource = "toggle";
+    const String pidStandard = "standard";
+
+    //==============================================================================
+    float midiFreqAndOffset;
+    float midiFreq;
+    int midiNote;
 private:
-	AudioProcessorValueTreeState parameters;
-	MidiKeyboardState keyboardState;
+    AudioProcessorValueTreeState parameters;
+    MidiKeyboardState keyboardState;
 
-	float sampleRate;
-	float lfoInstantPhase;
+    float sampleRate;
+    float lfoInstantPhase;
 
-	float* parameterLfoFreq	= nullptr;
-	float* parameterOctave		= nullptr;
-	float* parameterSemitone	= nullptr;
-	float* parameterCents		= nullptr;
-	float* parameterDepth		= nullptr;
-	float* parameterSource		= nullptr;
-	float* parameterStandard	= nullptr;
+    float* parameterLfoFreq = nullptr;
+    float* parameterOctave = nullptr;
+    float* parameterSemitone = nullptr;
+    float* parameterCents = nullptr;
+    float* parameterDepth = nullptr;
+    float* parameterSource = nullptr;
+    float* parameterStandard = nullptr;
 
-	float previousDepth;
+    float previousDepth;
 
-	float linearInterpolate(float y0,float y1,float t);
+    float linearInterpolate(float y0, float y1, float t);
 
-	// Inherited via MidiKeyboardStateListener
-	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
+    // Inherited via MidiKeyboardStateListener
+    virtual void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
-	virtual void handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
+    virtual void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
     //==============================================================================
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
 };
