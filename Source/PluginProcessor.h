@@ -20,6 +20,7 @@ const String pidOffsetCents = "cents";
 const String pidDepth = "depth";
 const String pidToggleMidiSource = "toggle";
 const String pidStandard = "standard";
+
 //==============================================================================
 class MusicalRingModAudioProcessor : public AudioProcessor,
                                      private MidiKeyboardStateListener
@@ -89,9 +90,9 @@ private:
     static float linearInterpolate(float y0, float y1, float t);
 
     // Inherited via MidiKeyboardStateListener
-    virtual void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
-    virtual void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessor)
