@@ -30,6 +30,8 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     midiNote = 0;
     midiFreq = 0;
     midiFreqAndOffset = 0;
+	sampleRate = 0;
+	previousDepth = 0;
 
     parameters.createAndAddParameter(pidLfoFreq, // parameter ID
                                      "LFO Frequency", // parameter Name
@@ -213,7 +215,7 @@ void MusicalRingModAudioProcessor::prepareToPlay(double sampleRate, int samplesP
 {
     // Use this method as the place to do any pre-playback
     // initialization that you need..
-    sampleRate = sampleRate;
+    this->sampleRate = sampleRate;
     previousDepth = *parameterDepth;
 }
 
@@ -252,12 +254,12 @@ void MusicalRingModAudioProcessor::processBlock(AudioBuffer<float>& buffer, Midi
     ScopedNoDenormals noDenormals;
     const auto totalNumInputChannels = getTotalNumInputChannels();
     const auto totalNumOutputChannels = getTotalNumOutputChannels();
-    const int numSamples = buffer.getNumSamples();
+    const auto numSamples = buffer.getNumSamples();
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    const float nextDepth = *parameterDepth;
+    const auto nextDepth = *parameterDepth;
 
     for (int sample = 0; sample < numSamples; ++sample)
     {
@@ -278,7 +280,7 @@ void MusicalRingModAudioProcessor::processBlock(AudioBuffer<float>& buffer, Midi
         if (midiNote != 0)
         {
             midiFreq = convertMidiToHz(midiNote, 0, *parameterStandard);
-            auto semitoneOffset = (*parameterOctave * 12) + *parameterSemitone + (*parameterCents * .01);
+            const auto semitoneOffset = (*parameterOctave * 12) + *parameterSemitone + (*parameterCents * .01);
             midiFreqAndOffset = convertMidiToHz(midiNote, semitoneOffset, *parameterStandard);
         }
         else
@@ -288,9 +290,9 @@ void MusicalRingModAudioProcessor::processBlock(AudioBuffer<float>& buffer, Midi
         }
 
         // linear interpolation to avoid clicks and pops on depth change
-        const float depth = linearInterpolate(previousDepth, nextDepth, float(sample + 1) / float(numSamples));
+        const auto depth = linearInterpolate(previousDepth, nextDepth, float(sample + 1) / float(numSamples));
         // m[n] = 1 - a + a * cos(n * wc)
-        const float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase);
+        const auto carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase);
 
         //update all the channels
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -301,7 +303,7 @@ void MusicalRingModAudioProcessor::processBlock(AudioBuffer<float>& buffer, Midi
             channelData[sample] = carrier * channelData[sample];
         }
 
-        float lfoFreq = midiFreqAndOffset;
+        auto lfoFreq = midiFreqAndOffset;
         if (*parameterSource == 0.0f)
         {
             lfoFreq = *parameterLfoFreq;
@@ -318,7 +320,7 @@ void MusicalRingModAudioProcessor::processBlock(AudioBuffer<float>& buffer, Midi
     previousDepth = nextDepth;
 }
 
-float MusicalRingModAudioProcessor::convertMidiToHz(float noteNumber, float semiToneOffset, float a4)
+float MusicalRingModAudioProcessor::convertMidiToHz(const float noteNumber, const float semiToneOffset, const float a4) const
 {
     return a4 * pow(2.0f, (noteNumber + semiToneOffset - 69.0f) / 12.0f);
 }
@@ -338,21 +340,21 @@ AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()
 void MusicalRingModAudioProcessor::getStateInformation(MemoryBlock& destData)
 {
     // store parameters
-    ScopedPointer<XmlElement> xml(parameters.state.createXml());
+    const ScopedPointer<XmlElement> xml(parameters.state.createXml());
     copyXmlToBinary(*xml, destData);
 }
 
 void MusicalRingModAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     //restore parameters
-    ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    const ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.state = ValueTree::fromXml(*xmlState);
 }
 
-float MusicalRingModAudioProcessor::linearInterpolate(float y0, float y1, float t)
+float MusicalRingModAudioProcessor::linearInterpolate(const float y0, const float y1, const float t) const
 {
     return y0 + t * (y1 - y0);
 }

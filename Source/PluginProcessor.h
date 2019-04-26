@@ -31,7 +31,7 @@ public:
 
     void processBlock(AudioBuffer<float>&, MidiBuffer&) override;
 
-    float convertMidiToHz(float noteNumber, float semiToneOffset, float a4);
+    float convertMidiToHz(float noteNumber, float semiToneOffset, float a4) const;
 
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
@@ -86,7 +86,7 @@ private:
 
     float previousDepth;
 
-    float linearInterpolate(float y0, float y1, float t);
+    float linearInterpolate(float y0, float y1, float t) const;
 
     // Inherited via MidiKeyboardStateListener
     virtual void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
