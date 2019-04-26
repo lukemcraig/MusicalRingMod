@@ -348,7 +348,7 @@ void MusicalRingModAudioProcessor::setStateInformation(const void* data, int siz
             parameters.state = ValueTree::fromXml(*xmlState);
 }
 
-float MusicalRingModAudioProcessor::linearInterpolate(const float y0, const float y1, const float t) const
+float MusicalRingModAudioProcessor::linearInterpolate(const float y0, const float y1, const float t)
 {
     return y0 + t * (y1 - y0);
 }

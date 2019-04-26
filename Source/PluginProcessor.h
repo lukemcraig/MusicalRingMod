@@ -86,7 +86,7 @@ private:
 
     float previousDepth;
 
-    float linearInterpolate(float y0, float y1, float t) const;
+    static float linearInterpolate(float y0, float y1, float t);
 
     // Inherited via MidiKeyboardStateListener
     virtual void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;

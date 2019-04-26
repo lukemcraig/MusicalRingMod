@@ -13,7 +13,7 @@
 MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRingModAudioProcessor& p,
                                                                        AudioProcessorValueTreeState& vts,
                                                                        MidiKeyboardState& ks)
-    : AudioProcessorEditor(&p), valueTreeState(vts), processor(p), 
+    : AudioProcessorEditor(&p), valueTreeState(vts), processor(p),
       keyboard(ks, MidiKeyboardComponent::horizontalKeyboard), keyboardState(ks)
 {
     setSize(800, 600);
@@ -159,7 +159,7 @@ void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 
     g.setColour(Colours::white);
     g.setFont(15.0f);
-	g.drawFittedText(__DATE__+String(" ")+ __TIME__, getLocalBounds(), Justification::topLeft, 1);
+    g.drawFittedText(__DATE__ + String(" ") + __TIME__, getLocalBounds(), Justification::topLeft, 1);
 }
 
 void MusicalRingModAudioProcessorEditor::resized()
@@ -197,7 +197,7 @@ void MusicalRingModAudioProcessorEditor::resized()
     keyboard.setBounds(keyboardArea);
 }
 
-void MusicalRingModAudioProcessorEditor::layoutFLabels(juce::Rectangle<int>& fLabelsArea)
+void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsArea)
 {
     fOutLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
     auto fLeftArea = fLabelsArea.removeFromLeft(fLabelsArea.getWidth() / 2);

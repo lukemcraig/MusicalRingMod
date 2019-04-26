@@ -30,7 +30,7 @@ public:
     //==============================================================================
     void paint(Graphics&) override;
     void resized() override;
-    void layoutFLabels(juce::Rectangle<int>& fLabelsArea);
+    void layoutFLabels(Rectangle<int>& fLabelsArea);
     void timerCallback() override;
 
 private:
@@ -100,8 +100,8 @@ private:
     MidiKeyboardState& keyboardState;
 
     // Inherited via MidiKeyboardStateListener
-    virtual void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
-    virtual void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
+    void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
 };
