@@ -32,7 +32,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     midiFreqAndOffset = 0;
 
     parameters.createAndAddParameter(pidLfoFreq, // parameter ID
-                                     "LFO Frequency", // paramter Name
+                                     "LFO Frequency", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(0.0f, 10000.0f, 0, 0.5f), //range
                                      20.0f, // default value
@@ -45,7 +45,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     );
 
     parameters.createAndAddParameter(pidOffsetOctaves, // parameter ID
-                                     "Octaves", // paramter Name
+                                     "Octaves", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(-10, 10, 1), //range
                                      0, // default value
@@ -58,7 +58,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     );
 
     parameters.createAndAddParameter(pidOffsetSemitones, // parameter ID
-                                     "Semitones", // paramter Name
+                                     "Semitones", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(-100, 100, 1), //range
                                      0, // default value
@@ -71,7 +71,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     );
 
     parameters.createAndAddParameter(pidOffsetCents, // parameter ID
-                                     "Cents", // paramter Name
+                                     "Cents", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(-100, 100, 1), //range
                                      0, // default value
@@ -84,7 +84,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     );
 
     parameters.createAndAddParameter(pidDepth, // parameter ID
-                                     "Modulation Depth", // paramter Name
+                                     "Modulation Depth", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(0.0f, 1.0f, 0), //range
                                      1.0f, // default value
@@ -99,7 +99,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
                                          return text.getFloatValue() * 0.01;
                                      });
     parameters.createAndAddParameter(pidToggleMidiSource, // parameter ID
-                                     "Freq Source", // paramter Name
+                                     "Freq Source", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(0.0f, 1.0f, 0), //range
                                      0.0f, // default value
@@ -117,7 +117,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
                                      });
 
     parameters.createAndAddParameter(pidStandard, // parameter ID
-                                     "Pitch Standard", // paramter Name
+                                     "Pitch Standard", // parameter Name
                                      String(""), // parameter label (suffix)
                                      NormalisableRange<float>(300.0f, 500.0f, 0.1f), //range
                                      440.0f, // default value

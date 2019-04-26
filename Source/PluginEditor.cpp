@@ -154,7 +154,7 @@ MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
 //==============================================================================
 void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    // (Our component is opaque, so we must completely fill the background with a solid color)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
     g.setColour(Colours::white);
