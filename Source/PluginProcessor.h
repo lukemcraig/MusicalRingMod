@@ -13,6 +13,14 @@
 //==============================================================================
 /**
 */
+const String pidLfoFreq = "lfoFreq";
+const String pidOffsetOctaves = "octaves";
+const String pidOffsetSemitones = "semitones";
+const String pidOffsetCents = "cents";
+const String pidDepth = "depth";
+const String pidToggleMidiSource = "toggle";
+const String pidStandard = "standard";
+//==============================================================================
 class MusicalRingModAudioProcessor : public AudioProcessor,
                                      private MidiKeyboardStateListener
 {
@@ -57,15 +65,7 @@ public:
     void setStateInformation(const void* data, int sizeInBytes) override;
 
     //==============================================================================
-    const String pidLfoFreq = "lfoFreq";
-    const String pidOffsetOctaves = "octaves";
-    const String pidOffsetSemitones = "semitones";
-    const String pidOffsetCents = "cents";
-    const String pidDepth = "depth";
-    const String pidToggleMidiSource = "toggle";
-    const String pidStandard = "standard";
 
-    //==============================================================================
     float midiFreqAndOffset;
     float midiFreq;
     int midiNote;

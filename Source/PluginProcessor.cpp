@@ -8,7 +8,101 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+//==============================================================================
+AudioProcessorValueTreeState::ParameterLayout createParameterLayout()
+{
+	std::vector<std::unique_ptr<AudioParameterFloat>> params;
+	std::function<String(float value, int maximumStringLength)> lfoFreqValueToHzFunction = [](float value, int maximumStringLength) { return String(value, 3) + String("Hz"); };
+	params.push_back(std::make_unique<AudioParameterFloat>(
+		pidLfoFreq, // parameter ID
+		"LFO Frequency", // parameter Name
+		NormalisableRange<float>(0, 10000, 0, 0.5f), //range
+		20.0f, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		lfoFreqValueToHzFunction,
+		nullptr)
+		);
 
+	std::function<String(float value, int maximumStringLength)> octaveValueToText = [](float value, int maximumStringLength) { return String(value, 0) + String(" octaves"); };
+	params.push_back(std::make_unique<AudioParameterFloat>(
+	    pidOffsetOctaves, // parameter ID
+		"Octaves", // parameter Name
+		NormalisableRange<float>(-10, 10, 1), //range
+		0, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		octaveValueToText,
+		nullptr)
+		);
+
+	std::function<String(float value, int maximumStringLength)> semitonesValueToText = [](float value, int maximumStringLength) { return String(value, 0) + String(" semitones"); };
+	params.push_back(std::make_unique<AudioParameterFloat>(
+	pidOffsetSemitones, // parameter ID
+		"Semitones", // parameter Name
+		NormalisableRange<float>(-100, 100, 1), //range
+		0, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		semitonesValueToText,
+		nullptr)
+		);
+
+	std::function<String(float value, int maximumStringLength)> centsValueToText = [](float value, int maximumStringLength) { return String(value, 0) + String(" cents"); };
+	params.push_back(std::make_unique<AudioParameterFloat>(
+	pidOffsetCents, // parameter ID
+		"Cents", // parameter Name		
+		NormalisableRange<float>(-100, 100, 1), //range
+		0, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		centsValueToText,
+		nullptr)
+		);
+
+	std::function<String(float value, int maximumStringLength)> depthValueToText = [](float value, int maximumStringLength) { return String(value * 100.0f, 2) + String("%"); };
+	std::function<float(const String &text)> depthTextToValue = [](const String &text) { return text.getFloatValue() * 0.01f; };
+	params.push_back(std::make_unique<AudioParameterFloat>(
+	pidDepth, // parameter ID
+		"Modulation Depth", // parameter Name
+		NormalisableRange<float>(0.0f, 1.0f, 0), //range
+		1.0f, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		depthValueToText,
+		depthTextToValue)
+		);
+
+	std::function<String(float value, int maximumStringLength)> sourceValueToText = [](float value, int maximumStringLength) { return value < 0.5 ? "Midi" : "Slider"; };
+	std::function<float(const String &text)> sourceTextToValue = [](const String &text) { if (text == "Midi") return 0.0f;
+	if (text == "Slider") return 1.0f;
+	return 0.0f; };
+	params.push_back(std::make_unique<AudioParameterFloat>(
+	pidToggleMidiSource, // parameter ID
+		"Freq Source", // parameter Name		
+		NormalisableRange<float>(0.0f, 1.0f, 0), //range
+		0.0f, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		sourceValueToText,
+		sourceTextToValue)
+	);
+
+	std::function<String(float value, int maximumStringLength)> pitchValueToText = [](float value, int maximumStringLength) { return String(value, 1) + String("Hz"); };
+
+	params.push_back(std::make_unique<AudioParameterFloat>(
+	pidStandard, // parameter ID
+		"Pitch Standard", // parameter Name		
+		NormalisableRange<float>(300.0f, 500.0f, 0.1f), //range
+		440.0f, // default value
+		String(""), // parameter label (suffix)
+		AudioProcessorParameter::genericParameter, // category
+		pitchValueToText,
+		nullptr)
+		);
+
+	return { params.begin(), params.end() };
+}
 //==============================================================================
 MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -23,7 +117,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 #endif
       ),
 #endif
-      parameters(*this, nullptr)
+	 parameters(*this, nullptr, Identifier("MusicRingModParams"), createParameterLayout())
 {
     lfoInstantPhase = 0.0f;
     midiFreqAndOffset = 0.0f;
@@ -32,106 +126,6 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
     midiFreqAndOffset = 0;
 	sampleRate = 0;
 	previousDepth = 0;
-
-    parameters.createAndAddParameter(pidLfoFreq, // parameter ID
-                                     "LFO Frequency", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(0.0f, 10000.0f, 0, 0.5f), //range
-                                     20.0f, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return String(value, 3) + String("Hz");
-                                     },
-                                     nullptr
-    );
-
-    parameters.createAndAddParameter(pidOffsetOctaves, // parameter ID
-                                     "Octaves", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(-10, 10, 1), //range
-                                     0, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return String(value, 0) + String(" octaves");
-                                     },
-                                     nullptr
-    );
-
-    parameters.createAndAddParameter(pidOffsetSemitones, // parameter ID
-                                     "Semitones", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(-100, 100, 1), //range
-                                     0, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return String(value, 0) + String(" semitones");
-                                     },
-                                     nullptr
-    );
-
-    parameters.createAndAddParameter(pidOffsetCents, // parameter ID
-                                     "Cents", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(-100, 100, 1), //range
-                                     0, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return String(value, 0) + String(" cents");
-                                     },
-                                     nullptr
-    );
-
-    parameters.createAndAddParameter(pidDepth, // parameter ID
-                                     "Modulation Depth", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(0.0f, 1.0f, 0), //range
-                                     1.0f, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return String(value * 100.0f, 2) + String("%");
-                                     },
-                                     [](const String& text)
-                                     {
-                                         // text to value function (C++11 lambda)			
-                                         return text.getFloatValue() * 0.01;
-                                     });
-    parameters.createAndAddParameter(pidToggleMidiSource, // parameter ID
-                                     "Freq Source", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(0.0f, 1.0f, 0), //range
-                                     0.0f, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return value < 0.5 ? "Midi" : "Slider";
-                                     },
-                                     [](const String& text)
-                                     {
-                                         // text to value function (C++11 lambda)
-                                         if (text == "Midi") return 0.0f;
-                                         if (text == "Slider") return 1.0f;
-                                         return 0.0f;
-                                     });
-
-    parameters.createAndAddParameter(pidStandard, // parameter ID
-                                     "Pitch Standard", // parameter Name
-                                     String(""), // parameter label (suffix)
-                                     NormalisableRange<float>(300.0f, 500.0f, 0.1f), //range
-                                     440.0f, // default value
-                                     [](float value)
-                                     {
-                                         // value to text function (C++11 lambda)
-                                         return String(value, 1) + String("Hz");
-                                     },
-                                     nullptr
-    );
-
-    parameters.state = ValueTree(Identifier("RingModParameters"));
 
     parameterLfoFreq = parameters.getRawParameterValue(pidLfoFreq);
     parameterOctave = parameters.getRawParameterValue(pidOffsetOctaves);

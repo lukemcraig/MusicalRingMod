@@ -3,10 +3,12 @@
 <JUCERPROJECT name="MusicalRingMod" projectType="audioplug" buildStandalone="1"
               jucerVersion="5.4.3" companyName="Liminal Signals" pluginName="Musical Ring Mod"
               pluginDesc="Musical Ring Mod" pluginManufacturer="Liminal Signals"
-              pluginWantsMidiIn="1" pluginFormats="buildVST,buildStandalone"
-              pluginCharacteristicsValue="pluginWantsMidiIn" buildVST="1" buildVST3="0"
-              buildAU="0" buildAUv3="0" buildRTAS="0" buildAAX="0" enableIAA="0"
-              id="FH7myB">
+              pluginWantsMidiIn="1" pluginFormats="buildAU,buildStandalone,buildVST3"
+              buildVST="0" buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0"
+              buildAAX="0" enableIAA="0" id="FH7myB" pluginIsSynth="0" pluginProducesMidiOut="0"
+              pluginIsMidiEffectPlugin="0" pluginEditorRequiresKeys="0" pluginRTASDisableBypass="0"
+              pluginRTASDisableMultiMono="0" pluginAAXDisableBypass="0" pluginAAXDisableMultiMono="0"
+              pluginCharacteristicsValue="pluginWantsMidiIn" pluginAUMainType="'aufx'">
   <MAINGROUP id="xx77tt" name="MusicalRingMod">
     <GROUP id="{2F533566-F4DE-CBF8-2446-E7EDF622AD24}" name="Source">
       <FILE id="gWigjJ" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -61,7 +63,7 @@
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS/>
+  <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <LIVE_SETTINGS>
     <WINDOWS/>
   </LIVE_SETTINGS>

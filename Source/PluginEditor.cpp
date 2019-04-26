@@ -26,11 +26,11 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     lfoFreqSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                   lfoFreqSlider.getTextBoxHeight());
     addAndMakeVisible(&lfoFreqSlider);
-    lfoFreqSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.pidLfoFreq, lfoFreqSlider));
+    lfoFreqSliderAttachment.reset(new SliderAttachment(valueTreeState, pidLfoFreq, lfoFreqSlider));
 
     midiSourceButton.setButtonText("Midi");
     addAndMakeVisible(midiSourceButton);
-    freqToggleAttachment.reset(new ButtonAttachment(valueTreeState, processor.pidToggleMidiSource,
+    freqToggleAttachment.reset(new ButtonAttachment(valueTreeState, pidToggleMidiSource,
                                                     midiSourceButton));
     midiSourceButton.setRadioGroupId(frequencySourceButtons);
 
@@ -49,27 +49,27 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
                                        offsetOctaveSlider.getTextBoxHeight());
     addAndMakeVisible(&offsetOctaveSlider);
     offsetOctaveSliderAttachment.reset(
-        new SliderAttachment(valueTreeState, processor.pidOffsetOctaves, offsetOctaveSlider));
+        new SliderAttachment(valueTreeState, pidOffsetOctaves, offsetOctaveSlider));
 
     offsetSemitoneSlider.setSliderStyle(Slider::IncDecButtons);
     offsetSemitoneSlider.setTextBoxStyle(Slider::TextBoxAbove, false, offsetSemitoneSlider.getTextBoxWidth(),
                                          offsetSemitoneSlider.getTextBoxHeight());
     addAndMakeVisible(&offsetSemitoneSlider);
     offsetSemitoneSliderAttachment.reset(
-        new SliderAttachment(valueTreeState, processor.pidOffsetSemitones, offsetSemitoneSlider));
+        new SliderAttachment(valueTreeState, pidOffsetSemitones, offsetSemitoneSlider));
 
     offsetCentsSlider.setSliderStyle(Slider::IncDecButtons);
     offsetCentsSlider.setTextBoxStyle(Slider::TextBoxAbove, false, offsetCentsSlider.getTextBoxWidth(),
                                       offsetCentsSlider.getTextBoxHeight());
     addAndMakeVisible(&offsetCentsSlider);
     offsetCentsSliderAttachment.reset(
-        new SliderAttachment(valueTreeState, processor.pidOffsetCents, offsetCentsSlider));
+        new SliderAttachment(valueTreeState, pidOffsetCents, offsetCentsSlider));
 
     standardSlider.setSliderStyle(Slider::IncDecButtons);
     standardSlider.setTextBoxStyle(Slider::TextBoxAbove, false, standardSlider.getTextBoxWidth(),
                                    standardSlider.getTextBoxHeight());
     addAndMakeVisible(&standardSlider);
-    standardSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.pidStandard, standardSlider));
+    standardSliderAttachment.reset(new SliderAttachment(valueTreeState, pidStandard, standardSlider));
 
     // --------
 
@@ -81,7 +81,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                 depthSlider.getTextBoxHeight());
     addAndMakeVisible(&depthSlider);
-    depthSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.pidDepth, depthSlider));
+    depthSliderAttachment.reset(new SliderAttachment(valueTreeState, pidDepth, depthSlider));
 
     setupFLabels();
 
@@ -159,6 +159,7 @@ void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 
     g.setColour(Colours::white);
     g.setFont(15.0f);
+	g.drawFittedText(__DATE__+String(" ")+ __TIME__, getLocalBounds(), Justification::topLeft, 1);
 }
 
 void MusicalRingModAudioProcessorEditor::resized()
@@ -224,7 +225,7 @@ void MusicalRingModAudioProcessorEditor::layoutFLabels(juce::Rectangle<int>& fLa
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {
-    if (*valueTreeState.getRawParameterValue(processor.pidToggleMidiSource) == 1.0f)
+    if (*valueTreeState.getRawParameterValue(pidToggleMidiSource) == 1.0f)
     {
         lfoFreqSlider.setValue(processor.midiFreqAndOffset);
         offsetSemitoneSlider.setVisible(true);
