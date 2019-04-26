@@ -41,6 +41,7 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "MusicalRingMod";
+    const char* const  companyName    = "Liminal Signals";
     const char* const  versionString  = "1.0.0";
     const int          versionNumber  = 0x10000;
 }

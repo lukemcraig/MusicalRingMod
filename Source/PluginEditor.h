@@ -30,75 +30,73 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 	void layoutFLabels(juce::Rectangle<int> &fLabelsArea);
-	void timerCallback() override;
-	
+	void timerCallback() override;	
 
-private:
-	
+private:	
 	AudioProcessorValueTreeState& valueTreeState;
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     MusicalRingModAudioProcessor& processor;
 
-	Slider lfoFreqSlider_;
-	std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment_;
-	Label lfoFreqSliderLabel_;
+    Slider lfoFreqSlider;
+    std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment;
+    Label lfoFreqSliderLabel;
 
-	Label offsetsLabel_;
+    Label offsetsLabel;
 
-	Slider offsetOctaveSlider_;
-	std::unique_ptr<SliderAttachment> offsetOctaveSliderAttachment_;
+    Slider offsetOctaveSlider;
+	std::unique_ptr<SliderAttachment> offsetOctaveSliderAttachment;
 
-	Slider offsetSemitoneSlider_;
-	std::unique_ptr<SliderAttachment> offsetSemitoneSliderAttachment_;
+	Slider offsetSemitoneSlider;
+	std::unique_ptr<SliderAttachment> offsetSemitoneSliderAttachment;
 
-	Slider offsetCentsSlider_;
-	std::unique_ptr<SliderAttachment> offsetCentsSliderAttachment_;
+	Slider offsetCentsSlider;
+	std::unique_ptr<SliderAttachment> offsetCentsSliderAttachment;
 
-	Slider standardSlider_;
-	std::unique_ptr<SliderAttachment> standardSliderAttachment_;
+	Slider standardSlider;
+	std::unique_ptr<SliderAttachment> standardSliderAttachment;
 
-	Label fOutLabel_;
+	Label fOutLabel;
 
-	Label fLabel_;
-	Label fcLabel_;
+	Label fLabel;
+	Label fcLabel;
 
-	Label f0Label_;
-	Label f1Label_;
-	Label f2Label_;
-	Label f3Label_;
-	Label f4Label_;
-	Label f5Label_;
+	Label f0Label;
+	Label f1Label;
+	Label f2Label;
+	Label f3Label;
+	Label f4Label;
+	Label f5Label;
 
-	Label fValueLabel_;
-	Label fcValueLabel_;
+	Label fValueLabel;
+	Label fcValueLabel;
 
-	Label f0ValueLabel_;
-	Label f1ValueLabel_;
-	Label f2ValueLabel_;
-	Label f3ValueLabel_;
-	Label f4ValueLabel_;
-	Label f5ValueLabel_;
+	Label f0ValueLabel;
+	Label f1ValueLabel;
+	Label f2ValueLabel;
+	Label f3ValueLabel;
+	Label f4ValueLabel;
+	Label f5ValueLabel;
 
 	enum RadioButtonIds
 	{
-		FrequencySourceButtons = 1001
+		frequencySourceButtons = 1001
 	};
 
-	ToggleButton midiSourceButton_;
-	std::unique_ptr<ButtonAttachment> freqToggleAttachment_;
-	ToggleButton sliderSourceButton_;
+	ToggleButton midiSourceButton;
+	std::unique_ptr<ButtonAttachment> freqToggleAttachment;
+	ToggleButton sliderSourceButton;
 
-	Slider depthSlider_;
-	std::unique_ptr<SliderAttachment> depthSliderAttachment_;
-	Label depthSliderLabel_;
+	Slider depthSlider;
+	std::unique_ptr<SliderAttachment> depthSliderAttachment;
+	Label depthSliderLabel;
 
-	String frequencyToNoteName(double f);
+	String frequencyToNoteName(double f) const;
 
 	const std::string noteNames[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-	MidiKeyboardComponent keyboard_;
-	MidiKeyboardState& keyboardState_;    
+	MidiKeyboardComponent keyboard;
+	MidiKeyboardState& keyboardState;    
 
 	// Inherited via MidiKeyboardStateListener
 	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;
