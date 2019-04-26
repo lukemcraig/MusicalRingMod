@@ -23,11 +23,11 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
     lfoFreqSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                    lfoFreqSlider.getTextBoxHeight());
     addAndMakeVisible(&lfoFreqSlider);
-    lfoFreqSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.PID_LFO_FREQ, lfoFreqSlider));
+    lfoFreqSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.pidLfoFreq, lfoFreqSlider));
 
     midiSourceButton.setButtonText("Midi");
     addAndMakeVisible(midiSourceButton);
-    freqToggleAttachment.reset(new ButtonAttachment(valueTreeState, processor.PID_TOGGLE_MIDI_SOURCE,
+    freqToggleAttachment.reset(new ButtonAttachment(valueTreeState, processor.pidToggleMidiSource,
                                                      midiSourceButton));
     midiSourceButton.setRadioGroupId(frequencySourceButtons);
 
@@ -46,27 +46,27 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
                                         offsetOctaveSlider.getTextBoxHeight());
     addAndMakeVisible(&offsetOctaveSlider);
     offsetOctaveSliderAttachment.reset(
-        new SliderAttachment(valueTreeState, processor.PID_OFFSET_OCTAVES, offsetOctaveSlider));
+        new SliderAttachment(valueTreeState, processor.pidOffsetOctaves, offsetOctaveSlider));
 
     offsetSemitoneSlider.setSliderStyle(Slider::IncDecButtons);
     offsetSemitoneSlider.setTextBoxStyle(Slider::TextBoxAbove, false, offsetSemitoneSlider.getTextBoxWidth(),
                                           offsetSemitoneSlider.getTextBoxHeight());
     addAndMakeVisible(&offsetSemitoneSlider);
     offsetSemitoneSliderAttachment.reset(
-        new SliderAttachment(valueTreeState, processor.PID_OFFSET_SEMITONES, offsetSemitoneSlider));
+        new SliderAttachment(valueTreeState, processor.pidOffsetSemitones, offsetSemitoneSlider));
 
     offsetCentsSlider.setSliderStyle(Slider::IncDecButtons);
     offsetCentsSlider.setTextBoxStyle(Slider::TextBoxAbove, false, offsetCentsSlider.getTextBoxWidth(),
                                        offsetCentsSlider.getTextBoxHeight());
     addAndMakeVisible(&offsetCentsSlider);
     offsetCentsSliderAttachment.reset(
-        new SliderAttachment(valueTreeState, processor.PID_OFFSET_CENTS, offsetCentsSlider));
+        new SliderAttachment(valueTreeState, processor.pidOffsetCents, offsetCentsSlider));
 
     standardSlider.setSliderStyle(Slider::IncDecButtons);
     standardSlider.setTextBoxStyle(Slider::TextBoxAbove, false, standardSlider.getTextBoxWidth(),
                                     standardSlider.getTextBoxHeight());
     addAndMakeVisible(&standardSlider);
-    standardSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.PID_STANDARD, standardSlider));
+    standardSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.pidStandard, standardSlider));
 
     // --------
 
@@ -78,7 +78,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor (MusicalR
     depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                  depthSlider.getTextBoxHeight());
     addAndMakeVisible(&depthSlider);
-    depthSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.PID_DEPTH, depthSlider));
+    depthSliderAttachment.reset(new SliderAttachment(valueTreeState, processor.pidDepth, depthSlider));
 
     setupFLabels();
 
@@ -221,8 +221,8 @@ void MusicalRingModAudioProcessorEditor::layoutFLabels(juce::Rectangle<int> &fLa
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {	
-	if (*valueTreeState.getRawParameterValue(processor.PID_TOGGLE_MIDI_SOURCE) == 1.0f) {
-		lfoFreqSlider.setValue(processor.midiFreqOffsetted_);
+	if (*valueTreeState.getRawParameterValue(processor.pidToggleMidiSource) == 1.0f) {
+		lfoFreqSlider.setValue(processor.midiFreqAndOffset);
 		offsetSemitoneSlider.setVisible(true);
 		offsetCentsSlider.setVisible(true);
 		offsetOctaveSlider.setVisible(true);
@@ -235,7 +235,7 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 		standardSlider.setVisible(false);
 	}
 	// assuming the midi input is the input signal's fundamental frequency
-    const auto f = processor.midiFreq_;
+    const auto f = processor.midiFreq;
     const auto fc = lfoFreqSlider.getValue();
 
 	fValueLabel.setText(String(f)		+ "Hz,  " + frequencyToNoteName(f), dontSendNotification);

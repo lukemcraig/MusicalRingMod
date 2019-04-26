@@ -57,36 +57,36 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 	//==============================================================================
-	const String PID_LFO_FREQ = "lfofreq";
-	const String PID_OFFSET_OCTAVES = "octaves";
-	const String PID_OFFSET_SEMITONES = "semitones";
-	const String PID_OFFSET_CENTS = "cents";
-	const String PID_DEPTH = "depth";
-	const String PID_TOGGLE_MIDI_SOURCE = "toggle";
-	const String PID_STANDARD = "standard";	
+	const String pidLfoFreq = "lfoFreq";
+	const String pidOffsetOctaves = "octaves";
+	const String pidOffsetSemitones = "semitones";
+	const String pidOffsetCents = "cents";
+	const String pidDepth = "depth";
+	const String pidToggleMidiSource = "toggle";
+	const String pidStandard = "standard";	
 	
 	//==============================================================================
-	float midiFreqOffsetted_;
-	float midiFreq_;
-	int midiNote_;
+	float midiFreqAndOffset;
+	float midiFreq;
+	int midiNote;
 private:
-	AudioProcessorValueTreeState parameters_;
-	MidiKeyboardState keyboardState_;
+	AudioProcessorValueTreeState parameters;
+	MidiKeyboardState keyboardState;
 
-	float sampleRate_;
-	float lfoInstantPhase_;
+	float sampleRate;
+	float lfoInstantPhase;
 
-	float* parameterLfofreq_	= nullptr;
-	float* parameterOctave_		= nullptr;
-	float* parameterSemitone_	= nullptr;
-	float* parameterCents_		= nullptr;
-	float* parameterDepth_		= nullptr;
-	float* parameterSource_		= nullptr;
-	float* parameterStandard_	= nullptr;
+	float* parameterLfoFreq	= nullptr;
+	float* parameterOctave		= nullptr;
+	float* parameterSemitone	= nullptr;
+	float* parameterCents		= nullptr;
+	float* parameterDepth		= nullptr;
+	float* parameterSource		= nullptr;
+	float* parameterStandard	= nullptr;
 
-	float previousDepth_;
+	float previousDepth;
 
-	float lerp(float y0,float y1,float t);
+	float linearInterpolate(float y0,float y1,float t);
 
 	// Inherited via MidiKeyboardStateListener
 	virtual void handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity) override;

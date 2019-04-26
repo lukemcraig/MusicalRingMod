@@ -23,15 +23,15 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
                      #endif
                        ),
 #endif
-	parameters_(*this, nullptr)
+	parameters(*this, nullptr)
 {	
-	lfoInstantPhase_ = 0.0f;
-	midiFreqOffsetted_ = 0.0f;	
-	midiNote_ = 0;
-	midiFreq_ = 0;
-	midiFreqOffsetted_ = 0;
+	lfoInstantPhase = 0.0f;
+	midiFreqAndOffset = 0.0f;	
+	midiNote = 0;
+	midiFreq = 0;
+	midiFreqAndOffset = 0;
 
-	parameters_.createAndAddParameter(PID_LFO_FREQ, // parameter ID
+	parameters.createAndAddParameter(pidLfoFreq, // parameter ID
 		"LFO Frequency", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 10000.0f,0,0.5f), //range
@@ -44,7 +44,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters_.createAndAddParameter(PID_OFFSET_OCTAVES, // parameter ID
+	parameters.createAndAddParameter(pidOffsetOctaves, // parameter ID
 		"Octaves", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-10, 10, 1), //range
@@ -57,7 +57,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters_.createAndAddParameter(PID_OFFSET_SEMITONES, // parameter ID
+	parameters.createAndAddParameter(pidOffsetSemitones, // parameter ID
 		"Semitones", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-100, 100, 1), //range
@@ -70,7 +70,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters_.createAndAddParameter(PID_OFFSET_CENTS, // parameter ID
+	parameters.createAndAddParameter(pidOffsetCents, // parameter ID
 		"Cents", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(-100, 100, 1), //range
@@ -83,7 +83,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters_.createAndAddParameter(PID_DEPTH, // parameter ID
+	parameters.createAndAddParameter(pidDepth, // parameter ID
 		"Modulation Depth", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
@@ -98,7 +98,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			// text to value function (C++11 lambda)			
 			return text.getFloatValue()*0.01;
 		});
-	parameters_.createAndAddParameter(PID_TOGGLE_MIDI_SOURCE, // parameter ID
+	parameters.createAndAddParameter(pidToggleMidiSource, // parameter ID
 		"Freq Source", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(0.0f, 1.0f, 0), //range
@@ -116,7 +116,7 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 			return 0.0f;
 		});
 
-	parameters_.createAndAddParameter(PID_STANDARD, // parameter ID
+	parameters.createAndAddParameter(pidStandard, // parameter ID
 		"Pitch Standard", // paramter Name
 		String(""), // parameter label (suffix)
 		NormalisableRange<float>(300.0f, 500.0f, 0.1f), //range
@@ -129,17 +129,17 @@ MusicalRingModAudioProcessor::MusicalRingModAudioProcessor()
 		nullptr
 		);
 
-	parameters_.state = ValueTree(Identifier("RingModParameters"));
+	parameters.state = ValueTree(Identifier("RingModParameters"));
 
-	parameterLfofreq_	= parameters_.getRawParameterValue(PID_LFO_FREQ);
-	parameterOctave_	= parameters_.getRawParameterValue(PID_OFFSET_OCTAVES);
-	parameterSemitone_	= parameters_.getRawParameterValue(PID_OFFSET_SEMITONES);
-	parameterCents_		= parameters_.getRawParameterValue(PID_OFFSET_CENTS);
-	parameterDepth_		= parameters_.getRawParameterValue(PID_DEPTH);
-	parameterSource_	= parameters_.getRawParameterValue(PID_TOGGLE_MIDI_SOURCE);
-	parameterStandard_	= parameters_.getRawParameterValue(PID_STANDARD);
+	parameterLfoFreq	= parameters.getRawParameterValue(pidLfoFreq);
+	parameterOctave	    = parameters.getRawParameterValue(pidOffsetOctaves);
+	parameterSemitone	= parameters.getRawParameterValue(pidOffsetSemitones);
+	parameterCents		= parameters.getRawParameterValue(pidOffsetCents);
+	parameterDepth		= parameters.getRawParameterValue(pidDepth);
+	parameterSource	    = parameters.getRawParameterValue(pidToggleMidiSource);
+	parameterStandard	= parameters.getRawParameterValue(pidStandard);
 
-	keyboardState_.addListener(this);
+	keyboardState.addListener(this);
 }
 
 MusicalRingModAudioProcessor::~MusicalRingModAudioProcessor()
@@ -212,9 +212,9 @@ void MusicalRingModAudioProcessor::changeProgramName (int index, const String& n
 void MusicalRingModAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-	sampleRate_ = sampleRate;
-	previousDepth_ = *parameterDepth_;
+    // initialization that you need..
+	sampleRate = sampleRate;
+	previousDepth = *parameterDepth;
 }
 
 void MusicalRingModAudioProcessor::releaseResources()
@@ -250,14 +250,14 @@ bool MusicalRingModAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    const auto totalNumInputChannels  = getTotalNumInputChannels();
+    const auto totalNumOutputChannels = getTotalNumOutputChannels();
 	const int numSamples = buffer.getNumSamples();
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-	float nextDepth = *parameterDepth_;
+    const float nextDepth = *parameterDepth;
 	
 	for (int sample = 0; sample < numSamples; ++sample) {
 		
@@ -273,23 +273,23 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 
 			if (mResult.isNoteOn())
 			{
-				midiNote_ = mResult.getNoteNumber();				
+				midiNote = mResult.getNoteNumber();				
 			}
 		}
-		if (midiNote_ != 0) {
-			midiFreq_ = convertMIDIToHz(midiNote_, 0, *parameterStandard_);
-			auto semitoneOffset = (*parameterOctave_ * 12) + *parameterSemitone_ + (*parameterCents_*.01);
-			midiFreqOffsetted_ = convertMIDIToHz(midiNote_, semitoneOffset, *parameterStandard_);
+		if (midiNote != 0) {
+			midiFreq = convertMIDIToHz(midiNote, 0, *parameterStandard);
+			auto semitoneOffset = (*parameterOctave * 12) + *parameterSemitone + (*parameterCents*.01);
+			midiFreqAndOffset = convertMIDIToHz(midiNote, semitoneOffset, *parameterStandard);
 		}
 		else {
-			midiFreq_ = 0;
-			midiFreqOffsetted_ = 0;
+			midiFreq = 0;
+			midiFreqAndOffset = 0;
 		}
 		
 		// linear interpolation to avoid clicks and pops on depth change
-		float depth = lerp(previousDepth_, nextDepth, float(sample+1)/float(numSamples));
+        const float depth = linearInterpolate(previousDepth, nextDepth, float(sample+1)/float(numSamples));
 		// m[n] = 1 - a + a * cos(n * wc)
-		float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase_);		
+        const float carrier = 1.0f - depth + depth * cos(2.0f * float_Pi * lfoInstantPhase);		
 
 		//update all the channels
 		for (int channel = 0; channel < totalNumInputChannels; ++channel)
@@ -300,19 +300,19 @@ void MusicalRingModAudioProcessor::processBlock (AudioBuffer<float>& buffer, Mid
 			channelData[sample] = carrier * channelData[sample];
 		}
 
-		float lfoFreq = midiFreqOffsetted_ ;
-		if (*parameterSource_== 0.0f) {
-			lfoFreq = *parameterLfofreq_;
+		float lfoFreq = midiFreqAndOffset ;
+		if (*parameterSource== 0.0f) {
+			lfoFreq = *parameterLfoFreq;
 		}
 		//DBG(lfoFreq);
-		lfoInstantPhase_ += lfoFreq * (1.0f / sampleRate_);
+		lfoInstantPhase += lfoFreq * (1.0f / sampleRate);
 		// wrap the instantaneous phase from 0.0 to 1.0
-		if (lfoInstantPhase_ >= 1.0f) {
-			lfoInstantPhase_ -= 1.0f;
+		if (lfoInstantPhase >= 1.0f) {
+			lfoInstantPhase -= 1.0f;
 		}
-		jassert(lfoInstantPhase_<1.0f);
+		jassert(lfoInstantPhase<1.0f);
 	}
-	previousDepth_ = nextDepth;
+	previousDepth = nextDepth;
 }
 
 float MusicalRingModAudioProcessor::convertMIDIToHz(float noteNumber, float semiToneOffset, float a4)
@@ -328,14 +328,14 @@ bool MusicalRingModAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* MusicalRingModAudioProcessor::createEditor()
 {
-    return new MusicalRingModAudioProcessorEditor (*this, parameters_, keyboardState_);
+    return new MusicalRingModAudioProcessorEditor (*this, parameters, keyboardState);
 }
 
 //==============================================================================
 void MusicalRingModAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // store parameters
-	ScopedPointer<XmlElement> xml(parameters_.state.createXml());
+	ScopedPointer<XmlElement> xml(parameters.state.createXml());
 	copyXmlToBinary(*xml, destData);
 }
 
@@ -345,20 +345,19 @@ void MusicalRingModAudioProcessor::setStateInformation (const void* data, int si
 	ScopedPointer<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
 	if (xmlState != nullptr)
-		if (xmlState->hasTagName(parameters_.state.getType()))
-			parameters_.state = ValueTree::fromXml(*xmlState);
+		if (xmlState->hasTagName(parameters.state.getType()))
+			parameters.state = ValueTree::fromXml(*xmlState);
 }
 
-float MusicalRingModAudioProcessor::lerp(float y0, float y1, float t)
+float MusicalRingModAudioProcessor::linearInterpolate(float y0, float y1, float t)
 {
-
 	return y0+t*(y1-y0);
 }
 
 void MusicalRingModAudioProcessor::handleNoteOn(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
 {
 	// TODO
-	midiNote_ = midiNoteNumber;
+	midiNote = midiNoteNumber;
 }
 
 void MusicalRingModAudioProcessor::handleNoteOff(MidiKeyboardState * source, int midiChannel, int midiNoteNumber, float velocity)
