@@ -37,7 +37,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     sliderSourceButton.setButtonText("Slider");
     addAndMakeVisible(sliderSourceButton);
     sliderSourceButton.setRadioGroupId(frequencySourceButtons);
-    sliderSourceButton.setToggleState(!midiSourceButton.getToggleState(), false);
+    sliderSourceButton.setToggleState(!midiSourceButton.getToggleState(), dontSendNotification);
 
     // --------
 
@@ -262,7 +262,7 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 
 String MusicalRingModAudioProcessorEditor::frequencyToNoteName(const double f) const
 {
-    const auto halfStepsAboveC0 = roundDoubleToInt(12.0 * log2(f / 16.3516));
+    const auto halfStepsAboveC0 = roundToInt(12.0 * log2(f / 16.3516));
     if (halfStepsAboveC0 <= 12)
         return String("");
     const auto octave = halfStepsAboveC0 / 12;
