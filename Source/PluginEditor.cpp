@@ -137,7 +137,8 @@ void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 
     g.setColour(Colours::white);
     g.setFont(15.0f);
-    g.drawFittedText("Musical Ring Mod - Luke M. Craig - " __DATE__ + String(" ") + __TIME__, getLocalBounds(), Justification::topLeft, 1);
+    g.drawFittedText("Musical Ring Mod - Luke M. Craig - " __DATE__ + String(" ") + __TIME__, getLocalBounds(),
+                     Justification::topLeft, 1);
 }
 
 void MusicalRingModAudioProcessorEditor::resized()
@@ -146,26 +147,37 @@ void MusicalRingModAudioProcessorEditor::resized()
     // margins
     area.reduce(10, 10);
 
-    const auto paneAreaWidth = area.getWidth() / 4;
+    auto nPanes = 3;
+    const auto midiVisible = *valueTreeState.getRawParameterValue(pidToggleMidiSource);
+    if (midiVisible == 1.0f)
+        nPanes++;
+    const auto paneAreaWidth = area.getWidth() / nPanes;
     const auto paneMargin = 5;
 
     const auto keyboardArea = area.removeFromBottom(100);
 
-    auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
-    auto offsetsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
-    auto fLabelsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
     auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+    auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+    Rectangle<int> offsetsArea;
+    if (midiVisible == 1.0f)
+    {
+        offsetsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+    }
+    auto fLabelsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
 
     lfoFreqSliderLabel.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
     midiSourceButton.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
     sliderSourceButton.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
     lfoFreqSlider.setBounds(freqArea.reduced(20, 10));
 
-    offsetsLabel.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
-    offsetOctaveSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
-    offsetSemitoneSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
-    offsetCentsSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
-    standardSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+    if (midiVisible == 1.0f)
+    {
+        offsetsLabel.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
+        offsetOctaveSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+        offsetSemitoneSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+        offsetCentsSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+        standardSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+    }
 
     layoutFLabels(fLabelsArea);
 
@@ -199,9 +211,11 @@ void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsAr
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {
+    resized();
     if (*valueTreeState.getRawParameterValue(pidToggleMidiSource) == 1.0f)
     {
         lfoFreqSlider.setValue(processor.midiFreqAndOffset);
+        offsetsLabel.setVisible(true);
         offsetSemitoneSlider.setVisible(true);
         offsetCentsSlider.setVisible(true);
         offsetOctaveSlider.setVisible(true);
@@ -209,6 +223,7 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
     }
     else
     {
+        offsetsLabel.setVisible(false);
         offsetSemitoneSlider.setVisible(false);
         offsetCentsSlider.setVisible(false);
         offsetOctaveSlider.setVisible(false);
