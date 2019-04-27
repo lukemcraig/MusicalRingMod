@@ -9,7 +9,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-//==============================================================================
 MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRingModAudioProcessor& p,
                                                                        AudioProcessorValueTreeState& vts,
                                                                        MidiKeyboardState& ks)
@@ -18,29 +17,43 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
 {
     setSize(800, 600);
 
-    lfoFreqSliderLabel.setText("Frequency:", dontSendNotification);
-    addAndMakeVisible(lfoFreqSliderLabel);
+    setupLfoFreqSlider();
 
-    lfoFreqSlider.setSliderStyle(Slider::LinearBar);
+    setupSourceToggles();
 
-    lfoFreqSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
-                                  lfoFreqSlider.getTextBoxHeight());
-    addAndMakeVisible(&lfoFreqSlider);
-    lfoFreqSliderAttachment.reset(new SliderAttachment(valueTreeState, pidLfoFreq, lfoFreqSlider));
+    setupOffsets();
 
-    midiSourceButton.setButtonText("Midi");
-    addAndMakeVisible(midiSourceButton);
-    freqToggleAttachment.reset(new ButtonAttachment(valueTreeState, pidToggleMidiSource,
-                                                    midiSourceButton));
-    midiSourceButton.setRadioGroupId(frequencySourceButtons);
+    setupDepthSlider();
 
-    sliderSourceButton.setButtonText("Slider");
-    addAndMakeVisible(sliderSourceButton);
-    sliderSourceButton.setRadioGroupId(frequencySourceButtons);
-    sliderSourceButton.setToggleState(!midiSourceButton.getToggleState(), dontSendNotification);
+    setupFLabels();
 
-    // --------
+    addAndMakeVisible(keyboard);
+    keyboardState.addListener(this);
 
+    startTimerHz(30);
+}
+
+MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
+{
+    keyboardState.removeListener(this);
+	stopTimer();
+}
+
+void MusicalRingModAudioProcessorEditor::setupDepthSlider()
+{
+    depthSliderLabel.setText("Depth:", dontSendNotification);
+    addAndMakeVisible(depthSliderLabel);
+
+    depthSlider.setSliderStyle(Slider::LinearBar);
+
+    depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
+                                depthSlider.getTextBoxHeight());
+    addAndMakeVisible(&depthSlider);
+    depthSliderAttachment.reset(new SliderAttachment(valueTreeState, pidDepth, depthSlider));
+}
+
+void MusicalRingModAudioProcessorEditor::setupOffsets()
+{
     offsetsLabel.setText("Offsets:", dontSendNotification);
     addAndMakeVisible(offsetsLabel);
 
@@ -70,25 +83,33 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
                                    standardSlider.getTextBoxHeight());
     addAndMakeVisible(&standardSlider);
     standardSliderAttachment.reset(new SliderAttachment(valueTreeState, pidStandard, standardSlider));
+}
 
-    // --------
+void MusicalRingModAudioProcessorEditor::setupSourceToggles()
+{
+    midiSourceButton.setButtonText("Midi");
+    addAndMakeVisible(midiSourceButton);
+    freqToggleAttachment.reset(new ButtonAttachment(valueTreeState, pidToggleMidiSource,
+                                                    midiSourceButton));
+    midiSourceButton.setRadioGroupId(frequencySourceButtons);
 
-    depthSliderLabel.setText("Depth:", dontSendNotification);
-    addAndMakeVisible(depthSliderLabel);
+    sliderSourceButton.setButtonText("Slider");
+    addAndMakeVisible(sliderSourceButton);
+    sliderSourceButton.setRadioGroupId(frequencySourceButtons);
+    sliderSourceButton.setToggleState(!midiSourceButton.getToggleState(), dontSendNotification);
+}
 
-    depthSlider.setSliderStyle(Slider::LinearBar);
+void MusicalRingModAudioProcessorEditor::setupLfoFreqSlider()
+{
+    lfoFreqSliderLabel.setText("Frequency:", dontSendNotification);
+    addAndMakeVisible(lfoFreqSliderLabel);
 
-    depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
-                                depthSlider.getTextBoxHeight());
-    addAndMakeVisible(&depthSlider);
-    depthSliderAttachment.reset(new SliderAttachment(valueTreeState, pidDepth, depthSlider));
+    lfoFreqSlider.setSliderStyle(Slider::LinearBar);
 
-    setupFLabels();
-
-    addAndMakeVisible(keyboard);
-    keyboardState.addListener(this);
-
-    startTimerHz(30);
+    lfoFreqSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
+                                  lfoFreqSlider.getTextBoxHeight());
+    addAndMakeVisible(&lfoFreqSlider);
+    lfoFreqSliderAttachment.reset(new SliderAttachment(valueTreeState, pidLfoFreq, lfoFreqSlider));
 }
 
 void MusicalRingModAudioProcessorEditor::setupFLabels()
@@ -124,10 +145,6 @@ void MusicalRingModAudioProcessorEditor::setupFLabels()
     }
 }
 
-MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
-{
-    keyboardState.removeListener(this);
-}
 
 //==============================================================================
 void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
@@ -225,7 +242,6 @@ void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsAr
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {
-    //resized();
     if (*valueTreeState.getRawParameterValue(pidToggleMidiSource) == 1.0f)
     {
         lfoFreqSlider.setValue(processor.midiFreqAndOffset);

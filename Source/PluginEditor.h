@@ -23,9 +23,9 @@ public:
     typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
     typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
+
     MusicalRingModAudioProcessorEditor(MusicalRingModAudioProcessor&, AudioProcessorValueTreeState&,
                                        MidiKeyboardState&);
-    void setupFLabels();
     ~MusicalRingModAudioProcessorEditor();
 
     //==============================================================================
@@ -93,6 +93,11 @@ private:
     void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
 
     String frequencyToNoteName(double f) const;
+	void setupFLabels();
+	void setupDepthSlider();
+    void setupOffsets();
+    void setupSourceToggles();
+    void setupLfoFreqSlider();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
 };
