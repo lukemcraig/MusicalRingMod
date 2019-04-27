@@ -93,7 +93,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
 
 void MusicalRingModAudioProcessorEditor::setupFLabels()
 {
-    fOutLabel.setText("Output Frequencies:", dontSendNotification);
+    fOutLabel.setText("Input/Output Frequencies:", dontSendNotification);
     addAndMakeVisible(fOutLabel);
 
     fLabel.setText("f:", dontSendNotification);
@@ -147,8 +147,10 @@ void MusicalRingModAudioProcessorEditor::resized()
     // margins
     area.reduce(10, 10);
 
-    const auto nPanes = 4;
+    auto nPanes = 2;
     const auto midiVisible = *valueTreeState.getRawParameterValue(pidToggleMidiSource);
+    if (midiVisible == 1.0f)
+        nPanes += 2;
     const auto paneAreaHeight = area.getHeight() / nPanes;
     const auto paneMargin = 5;
 
@@ -158,6 +160,17 @@ void MusicalRingModAudioProcessorEditor::resized()
         depthSliderLabel.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
         depthSlider.setBounds(depthArea.reduced(20, 10));
         layoutFLabels(depthAndFLabelsArea);
+    }
+
+    {
+        auto freqArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
+
+        auto freqAreaTop = freqArea.removeFromTop(20);
+        lfoFreqSliderLabel.setBounds(freqAreaTop.removeFromLeft(80));
+        midiSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
+        sliderSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
+
+        lfoFreqSlider.setBounds(freqArea.reduced(20, 10));
     }
 
     if (midiVisible == 1.0f)
@@ -174,17 +187,6 @@ void MusicalRingModAudioProcessorEditor::resized()
     }
 
     {
-        auto freqArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
-
-        auto freqAreaTop = freqArea.removeFromTop(20);
-        lfoFreqSliderLabel.setBounds(freqAreaTop.removeFromLeft(80));
-        midiSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
-        sliderSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
-
-        lfoFreqSlider.setBounds(freqArea.reduced(20, 10));
-    }
-
-    {
         const auto keyboardArea = area.removeFromTop(paneAreaHeight);
         keyboard.setBounds(keyboardArea);
     }
@@ -192,31 +194,38 @@ void MusicalRingModAudioProcessorEditor::resized()
 
 void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsArea)
 {
-    // TODO 
-    fOutLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+    const auto space = 20;
+    fOutLabel.setBounds(fLabelsArea.removeFromTop(20));
     {
         auto fLeftArea = fLabelsArea.removeFromLeft(40);
 
-        fLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-        fcLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+        fLabel.setBounds(fLeftArea.removeFromTop(space));
+        fcLabel.setBounds(fLeftArea.removeFromTop(space));
+    }
+    {
+        auto fLeftArea = fLabelsArea.removeFromLeft(140);
+
+        fValueLabel.setBounds(fLeftArea.removeFromTop(space));
+        fcValueLabel.setBounds(fLeftArea.removeFromTop(space));
+    }
+    {
+        auto fLeftArea = fLabelsArea.removeFromLeft(40);
 
         for (auto& freqLabel : freqLabels)
         {
-            freqLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+            freqLabel.setBounds(fLeftArea.removeFromTop(space));
         }
     }
-    fValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    fcValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 
     for (auto& freqValueLabel : freqValueLabels)
     {
-        freqValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+        freqValueLabel.setBounds(fLabelsArea.removeFromTop(space));
     }
 }
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {
-    resized();
+    //resized();
     if (*valueTreeState.getRawParameterValue(pidToggleMidiSource) == 1.0f)
     {
         lfoFreqSlider.setValue(processor.midiFreqAndOffset);
@@ -225,6 +234,8 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
         offsetCentsSlider.setVisible(true);
         offsetOctaveSlider.setVisible(true);
         standardSlider.setVisible(true);
+        keyboard.setVisible(true);
+        setSize(800, 600);
     }
     else
     {
@@ -233,6 +244,8 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
         offsetCentsSlider.setVisible(false);
         offsetOctaveSlider.setVisible(false);
         standardSlider.setVisible(false);
+        keyboard.setVisible(false);
+        setSize(800, 400);
     }
     // assuming the midi input is the input signal's fundamental frequency
     const auto f = processor.midiFreq;
