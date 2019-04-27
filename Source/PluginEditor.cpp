@@ -137,7 +137,7 @@ void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 
     g.setColour(Colours::white);
     g.setFont(15.0f);
-    g.drawFittedText(__DATE__ + String(" ") + __TIME__, getLocalBounds(), Justification::topLeft, 1);
+    g.drawFittedText("Musical Ring Mod - Luke M. Craig - " __DATE__ + String(" ") + __TIME__, getLocalBounds(), Justification::topLeft, 1);
 }
 
 void MusicalRingModAudioProcessorEditor::resized()

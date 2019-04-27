@@ -36,14 +36,12 @@ public:
 
 private:
     AudioProcessorValueTreeState& valueTreeState;
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     MusicalRingModAudioProcessor& processor;
 
     Slider lfoFreqSlider;
     std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment;
-    Label lfoFreqSliderLabel;
 
+    Label lfoFreqSliderLabel;
     Label offsetsLabel;
 
     Slider offsetOctaveSlider;
@@ -77,13 +75,12 @@ private:
 
     ToggleButton midiSourceButton;
     std::unique_ptr<ButtonAttachment> freqToggleAttachment;
+
     ToggleButton sliderSourceButton;
 
     Slider depthSlider;
     std::unique_ptr<SliderAttachment> depthSliderAttachment;
     Label depthSliderLabel;
-
-    String frequencyToNoteName(double f) const;
 
     const std::string noteNames[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
@@ -93,6 +90,8 @@ private:
     // Inherited via MidiKeyboardStateListener
     void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
     void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity) override;
+
+	String frequencyToNoteName(double f) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
 };
