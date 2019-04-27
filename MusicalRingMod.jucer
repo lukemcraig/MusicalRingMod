@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT name="MusicalRingMod" projectType="audioplug" buildStandalone="1"
-              jucerVersion="5.4.3" companyName="Liminal Signals" pluginName="Musical Ring Mod"
-              pluginDesc="Musical Ring Mod" pluginManufacturer="Liminal Signals"
+              jucerVersion="5.4.3" companyName="Luke M. Craig" pluginName="Musical Ring Mod"
+              pluginDesc="Musical Ring Mod" pluginManufacturer="Luke M. Craig"
               pluginWantsMidiIn="1" pluginFormats="buildAU,buildStandalone,buildVST3"
               buildVST="0" buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" enableIAA="0" id="FH7myB" pluginIsSynth="0" pluginProducesMidiOut="0"

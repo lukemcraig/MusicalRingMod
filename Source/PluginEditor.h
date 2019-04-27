@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include <array>
 
 //==============================================================================
 /**
@@ -62,22 +63,12 @@ private:
     Label fLabel;
     Label fcLabel;
 
-    Label f0Label;
-    Label f1Label;
-    Label f2Label;
-    Label f3Label;
-    Label f4Label;
-    Label f5Label;
+    std::array<Label, 6> freqLabels;
 
     Label fValueLabel;
     Label fcValueLabel;
 
-    Label f0ValueLabel;
-    Label f1ValueLabel;
-    Label f2ValueLabel;
-    Label f3ValueLabel;
-    Label f4ValueLabel;
-    Label f5ValueLabel;
+    std::array<Label, 6> freqValueLabels;
 
     enum RadioButtonIds
     {

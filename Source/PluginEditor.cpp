@@ -102,23 +102,14 @@ void MusicalRingModAudioProcessorEditor::setupFLabels()
     fcLabel.setText("fc:", dontSendNotification);
     addAndMakeVisible(fcLabel);
 
-    f0Label.setText("f0:", dontSendNotification);
-    addAndMakeVisible(f0Label);
-
-    f1Label.setText("f1:", dontSendNotification);
-    addAndMakeVisible(f1Label);
-
-    f2Label.setText("f2:", dontSendNotification);
-    addAndMakeVisible(f2Label);
-
-    f3Label.setText("f3:", dontSendNotification);
-    addAndMakeVisible(f3Label);
-
-    f4Label.setText("f4:", dontSendNotification);
-    addAndMakeVisible(f4Label);
-
-    f5Label.setText("f5:", dontSendNotification);
-    addAndMakeVisible(f5Label);
+    {
+        auto i = 0;
+        for (auto& freqLabel : freqLabels)
+        {
+            freqLabel.setText("f" + String(i++) + ":", dontSendNotification);
+            addAndMakeVisible(freqLabel);
+        }
+    }
 
     fValueLabel.setText("", dontSendNotification);
     addAndMakeVisible(fValueLabel);
@@ -126,30 +117,17 @@ void MusicalRingModAudioProcessorEditor::setupFLabels()
     fcValueLabel.setText("", dontSendNotification);
     addAndMakeVisible(fcValueLabel);
 
-    f0ValueLabel.setText("", dontSendNotification);
-    addAndMakeVisible(f0ValueLabel);
-
-    f1ValueLabel.setText("", dontSendNotification);
-    addAndMakeVisible(f1ValueLabel);
-
-    f2ValueLabel.setText("", dontSendNotification);
-    addAndMakeVisible(f2ValueLabel);
-
-    f3ValueLabel.setText("", dontSendNotification);
-    addAndMakeVisible(f3ValueLabel);
-
-    f4ValueLabel.setText("", dontSendNotification);
-    addAndMakeVisible(f4ValueLabel);
-
-    f5ValueLabel.setText("", dontSendNotification);
-    addAndMakeVisible(f5ValueLabel);
+    for (auto& freqValueLabel : freqValueLabels)
+    {
+        freqValueLabel.setText("", dontSendNotification);
+        addAndMakeVisible(freqValueLabel);
+    }
 }
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
 {
     keyboardState.removeListener(this);
 }
-
 
 //==============================================================================
 void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
@@ -205,22 +183,18 @@ void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsAr
     fLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
     fcLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
 
-    f0Label.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    f1Label.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    f2Label.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    f3Label.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    f4Label.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    f5Label.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+    for (auto& freqLabel : freqLabels)
+    {
+        freqLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+    }
 
     fValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
     fcValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 
-    f0ValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    f1ValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    f2ValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    f3ValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    f4ValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    f5ValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+    for (auto& freqValueLabel : freqValueLabels)
+    {
+        freqValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
+    }
 }
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
@@ -246,18 +220,18 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
 
     fValueLabel.setText(String(f) + "Hz,  " + frequencyToNoteName(f), dontSendNotification);
     fcValueLabel.setText(String(fc) + "Hz,  " + frequencyToNoteName(fc), dontSendNotification);
-    const auto f0 = f - fc;
-    f0ValueLabel.setText(String(f0) + "Hz,  " + frequencyToNoteName(f0), dontSendNotification);
-    const auto f1 = f + fc;
-    f1ValueLabel.setText(String(f1) + "Hz,  " + frequencyToNoteName(f1), dontSendNotification);
-    const auto f2 = 2 * f - fc;
-    f2ValueLabel.setText(String(f2) + "Hz,  " + frequencyToNoteName(f2), dontSendNotification);
-    const auto f3 = 2 * f + fc;
-    f3ValueLabel.setText(String(f3) + "Hz,  " + frequencyToNoteName(f3), dontSendNotification);
-    const auto f4 = 3 * f - fc;
-    f4ValueLabel.setText(String(f4) + "Hz,  " + frequencyToNoteName(f4), dontSendNotification);
-    const auto f5 = 3 * f + fc;
-    f5ValueLabel.setText(String(f5) + "Hz,  " + frequencyToNoteName(f5), dontSendNotification);
+
+    {
+        auto i = 0;
+        for (auto& freqValueLabel : freqValueLabels)
+        {
+            const int j = (i / 2) + 1;
+            const auto evenOrOdd = i % 2 ? 1 : -1;
+            const auto freqValue = j * f + (evenOrOdd * fc);
+            freqValueLabel.setText(String(freqValue) + "Hz,  " + frequencyToNoteName(freqValue), dontSendNotification);
+            ++i;
+        }
+    }
 }
 
 String MusicalRingModAudioProcessorEditor::frequencyToNoteName(const double f) const
@@ -273,7 +247,8 @@ String MusicalRingModAudioProcessorEditor::frequencyToNoteName(const double f) c
 void MusicalRingModAudioProcessorEditor::handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber,
                                                       float velocity)
 {
-    DBG("hi");
+    // TODO
+    DBG("handleNoteOn()");
 }
 
 void MusicalRingModAudioProcessorEditor::handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber,

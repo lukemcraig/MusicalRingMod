@@ -344,7 +344,7 @@
  #define JucePlugin_Desc                   "Musical Ring Mod"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "Liminal Signals"
+ #define JucePlugin_Manufacturer           "Luke M. Craig"
 #endif
 #ifndef  JucePlugin_ManufacturerWebsite
  #define JucePlugin_ManufacturerWebsite    ""
@@ -407,7 +407,7 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.LiminalSignals.MusicalRingMod
+ #define JucePlugin_CFBundleIdentifier     com.LukeM_Craig.MusicalRingMod
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           0
@@ -425,7 +425,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.LiminalSignals.MusicalRingMod
+ #define JucePlugin_AAXIdentifier          com.LukeM_Craig.MusicalRingMod
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -449,7 +449,7 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "Liminal Signals: Musical Ring Mod"
+ #define JucePlugin_IAAName                "Luke M. Craig: Musical Ring Mod"
 #endif
 #ifndef  JucePlugin_VSTNumMidiInputs
  #define JucePlugin_VSTNumMidiInputs       16
