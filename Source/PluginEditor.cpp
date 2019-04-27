@@ -21,7 +21,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     lfoFreqSliderLabel.setText("Frequency:", dontSendNotification);
     addAndMakeVisible(lfoFreqSliderLabel);
 
-    lfoFreqSlider.setSliderStyle(Slider::LinearVertical);
+    lfoFreqSlider.setSliderStyle(Slider::LinearBar);
 
     lfoFreqSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                   lfoFreqSlider.getTextBoxHeight());
@@ -76,7 +76,7 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     depthSliderLabel.setText("Depth:", dontSendNotification);
     addAndMakeVisible(depthSliderLabel);
 
-    depthSlider.setSliderStyle(Slider::LinearVertical);
+    depthSlider.setSliderStyle(Slider::LinearBar);
 
     depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                 depthSlider.getTextBoxHeight());
@@ -147,59 +147,64 @@ void MusicalRingModAudioProcessorEditor::resized()
     // margins
     area.reduce(10, 10);
 
-    auto nPanes = 3;
+    const auto nPanes = 4;
     const auto midiVisible = *valueTreeState.getRawParameterValue(pidToggleMidiSource);
-    if (midiVisible == 1.0f)
-        nPanes++;
-    const auto paneAreaWidth = area.getWidth() / nPanes;
+    const auto paneAreaHeight = area.getHeight() / nPanes;
     const auto paneMargin = 5;
 
-    const auto keyboardArea = area.removeFromBottom(100);
-
-    auto depthArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
-    auto freqArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
-    Rectangle<int> offsetsArea;
-    if (midiVisible == 1.0f)
     {
-        offsetsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
+        auto depthAndFLabelsArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
+        auto depthArea = depthAndFLabelsArea.removeFromLeft(depthAndFLabelsArea.proportionOfWidth(0.5f));
+        depthSliderLabel.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
+        depthSlider.setBounds(depthArea.reduced(20, 10));
+        layoutFLabels(depthAndFLabelsArea);
     }
-    auto fLabelsArea = area.removeFromLeft(paneAreaWidth).reduced(paneMargin);
-
-    lfoFreqSliderLabel.setBounds(freqArea.removeFromTop(40).reduced(0, 10));
-    midiSourceButton.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
-    sliderSourceButton.setBounds(freqArea.removeFromTop(40).reduced(20, 10));
-    lfoFreqSlider.setBounds(freqArea.reduced(20, 10));
 
     if (midiVisible == 1.0f)
     {
+        auto offsetsArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
+
         offsetsLabel.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
-        offsetOctaveSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
-        offsetSemitoneSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
-        offsetCentsSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
-        standardSlider.setBounds(offsetsArea.removeFromTop(80).reduced(20, 10));
+        const auto nSliders = 4;
+        const auto sliderWidth = offsetsArea.proportionOfWidth(1.0f / nSliders);
+        offsetOctaveSlider.setBounds(offsetsArea.removeFromLeft(sliderWidth).reduced(20, 10));
+        offsetSemitoneSlider.setBounds(offsetsArea.removeFromLeft(sliderWidth).reduced(20, 10));
+        offsetCentsSlider.setBounds(offsetsArea.removeFromLeft(sliderWidth).reduced(20, 10));
+        standardSlider.setBounds(offsetsArea.removeFromLeft(sliderWidth).reduced(20, 10));
     }
 
-    layoutFLabels(fLabelsArea);
+    {
+        auto freqArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
 
-    depthSliderLabel.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
-    depthSlider.setBounds(depthArea.reduced(20, 10));
+        auto freqAreaTop = freqArea.removeFromTop(20);
+        lfoFreqSliderLabel.setBounds(freqAreaTop.removeFromLeft(80));
+        midiSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
+        sliderSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
 
-    keyboard.setBounds(keyboardArea);
+        lfoFreqSlider.setBounds(freqArea.reduced(20, 10));
+    }
+
+    {
+        const auto keyboardArea = area.removeFromTop(paneAreaHeight);
+        keyboard.setBounds(keyboardArea);
+    }
 }
 
 void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsArea)
 {
+    // TODO 
     fOutLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
-    auto fLeftArea = fLabelsArea.removeFromLeft(fLabelsArea.getWidth() / 2);
-
-    fLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    fcLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-
-    for (auto& freqLabel : freqLabels)
     {
-        freqLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
-    }
+        auto fLeftArea = fLabelsArea.removeFromLeft(40);
 
+        fLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+        fcLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+
+        for (auto& freqLabel : freqLabels)
+        {
+            freqLabel.setBounds(fLeftArea.removeFromTop(40).reduced(0, 10));
+        }
+    }
     fValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
     fcValueLabel.setBounds(fLabelsArea.removeFromTop(40).reduced(0, 10));
 

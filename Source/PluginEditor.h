@@ -61,12 +61,13 @@ private:
     Label fLabel;
     Label fcLabel;
 
-    std::array<Label, 6> freqLabels;
+	static constexpr int nFLabels = 6;
+    std::array<Label, nFLabels> freqLabels;
 
     Label fValueLabel;
     Label fcValueLabel;
 
-    std::array<Label, 6> freqValueLabels;
+    std::array<Label, nFLabels> freqValueLabels;
 
     enum RadioButtonIds
     {
