@@ -16,12 +16,12 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
       keyboard(ks, MidiKeyboardComponent::horizontalKeyboard), keyboardState(ks)
 {
 	{
-		const std::unique_ptr<XmlElement> xml(XmlDocument::parse(BinaryData::bg_svg));
+		const std::unique_ptr<XmlElement> xml(XmlDocument::parse(BinaryData::bg2_svg));
 		const std::unique_ptr<Drawable> svgDrawable(Drawable::createFromSVG(*xml));
 		bgPath.setPath((*svgDrawable).getOutlineAsPath());
-		bgPath.setFill(Colour(0xff7c5c48));
+		bgPath.setFill(Colour(0xff465359));
 		addAndMakeVisible(bgPath);
-		getLookAndFeel().setColour(ResizableWindow::backgroundColourId, Colour(0xff302d2b));
+		//getLookAndFeel().setColour(ResizableWindow::backgroundColourId, Colour(0xff402c1e));
 	}
 
     setupLfoFreqSlider();
@@ -37,8 +37,9 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     addAndMakeVisible(keyboard);
     keyboardState.addListener(this);
 
-    setSize(800, 600);
     startTimerHz(30);
+
+	setSize(800, 600);
 }
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
@@ -53,7 +54,7 @@ void MusicalRingModAudioProcessorEditor::setupDepthSlider()
     addAndMakeVisible(depthSliderLabel);
 
     depthSlider.setSliderStyle(Slider::LinearBar);
-
+	
     depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                 depthSlider.getTextBoxHeight());
     addAndMakeVisible(&depthSlider);
@@ -157,6 +158,7 @@ void MusicalRingModAudioProcessorEditor::setupFLabels()
 //==============================================================================
 void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 {
+	//getLookAndFeel().setColour(ResizableWindow::backgroundColourId, JUCE_LIVE_CONSTANT(Colour(0xff402c1e)));
     // (Our component is opaque, so we must completely fill the background with a solid color)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
@@ -171,9 +173,9 @@ void MusicalRingModAudioProcessorEditor::resized()
 	{
 		const auto bounds = getBounds().toFloat();
 		RectanglePlacement placement(RectanglePlacement::fillDestination);
-        const auto w = bgPath.getDrawableBounds().proportionOfWidth(0.18f);
+        const auto w = bgPath.getDrawableBounds().proportionOfWidth(0.17f);
 		const auto fitTransform = placement.getTransformToFit(bgPath.getDrawableBounds().reduced(w), bounds);
-		bgPath.setTransform(fitTransform);
+		bgPath.setTransform(fitTransform.followedBy(AffineTransform::translation(0,110.0f)));
 	}
 	auto area = getLocalBounds();
     // margins
