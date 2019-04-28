@@ -38,6 +38,8 @@ private:
     MusicalRingModAudioProcessor& processor;
 
 	DrawablePath bgPath;
+	DrawablePath borderPath;
+	Label nameLabel;
 
     Slider lfoFreqSlider;
     std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment;

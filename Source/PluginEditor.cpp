@@ -15,14 +15,27 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     : AudioProcessorEditor(&p), valueTreeState(vts), processor(p),
       keyboard(ks, MidiKeyboardComponent::horizontalKeyboard), keyboardState(ks)
 {
-	{
-		const std::unique_ptr<XmlElement> xml(XmlDocument::parse(BinaryData::bg2_svg));
-		const std::unique_ptr<Drawable> svgDrawable(Drawable::createFromSVG(*xml));
-		bgPath.setPath((*svgDrawable).getOutlineAsPath());
-		bgPath.setFill(Colour(0xff465359));
-		addAndMakeVisible(bgPath);
-		//getLookAndFeel().setColour(ResizableWindow::backgroundColourId, Colour(0xff402c1e));
-	}
+    {
+        const std::unique_ptr<XmlElement> xml(XmlDocument::parse(BinaryData::bg2_svg));
+        const std::unique_ptr<Drawable> svgDrawable(Drawable::createFromSVG(*xml));
+        bgPath.setPath((*svgDrawable).getOutlineAsPath());
+        bgPath.setFill(Colour(0xff465359));
+        addAndMakeVisible(bgPath);
+        //getLookAndFeel().setColour(ResizableWindow::backgroundColourId, Colour(0xff402c1e));
+    }
+
+    {
+        //Path path;
+        //path.addRoundedRectangle(0,0,10,10,.5f);
+        //borderPath.setPath(path);
+        borderPath.setFill(Colours::transparentBlack);
+        borderPath.setStrokeType(PathStrokeType(1));
+        borderPath.setStrokeFill(Colours::white);
+        addAndMakeVisible(borderPath);
+    }
+
+    nameLabel.setText("Musical Ring Mod - Luke M. Craig - " __DATE__ + String(" ") + __TIME__, dontSendNotification);
+    addAndMakeVisible(nameLabel);
 
     setupLfoFreqSlider();
 
@@ -38,8 +51,9 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     keyboardState.addListener(this);
 
     startTimerHz(30);
-
-	setSize(800, 600);
+    setResizable(true, true);
+    setResizeLimits(400, 400, 1680, 1050);
+    setSize(800, 600);
 }
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
@@ -54,7 +68,7 @@ void MusicalRingModAudioProcessorEditor::setupDepthSlider()
     addAndMakeVisible(depthSliderLabel);
 
     depthSlider.setSliderStyle(Slider::LinearBar);
-	
+
     depthSlider.setTextBoxStyle(Slider::TextBoxBelow, false, depthSlider.getTextBoxWidth(),
                                 depthSlider.getTextBoxHeight());
     addAndMakeVisible(&depthSlider);
@@ -154,33 +168,70 @@ void MusicalRingModAudioProcessorEditor::setupFLabels()
     }
 }
 
-
 //==============================================================================
 void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 {
-	//getLookAndFeel().setColour(ResizableWindow::backgroundColourId, JUCE_LIVE_CONSTANT(Colour(0xff402c1e)));
+    //getLookAndFeel().setColour(ResizableWindow::backgroundColourId, JUCE_LIVE_CONSTANT(Colour(0xff402c1e)));
     // (Our component is opaque, so we must completely fill the background with a solid color)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
     g.setColour(Colours::white);
     g.setFont(15.0f);
-    g.drawFittedText("Musical Ring Mod - Luke M. Craig - " __DATE__ + String(" ") + __TIME__, getLocalBounds(),
-                     Justification::topLeft, 1);
+    //g.drawFittedText("Musical Ring Mod - Luke M. Craig - " __DATE__ + String(" ") + __TIME__, getLocalBounds(),
+    //                  Justification::topLeft, 1);
 }
 
 void MusicalRingModAudioProcessorEditor::resized()
 {
-	{
-		const auto bounds = getBounds().toFloat();
-		RectanglePlacement placement(RectanglePlacement::fillDestination);
+    {
+        const auto bounds = getBounds().toFloat();
+        RectanglePlacement placement(RectanglePlacement::fillDestination);
         const auto w = bgPath.getDrawableBounds().proportionOfWidth(0.17f);
-		const auto fitTransform = placement.getTransformToFit(bgPath.getDrawableBounds().reduced(w), bounds);
-		bgPath.setTransform(fitTransform.followedBy(AffineTransform::translation(0,110.0f)));
-	}
-	auto area = getLocalBounds();
+        const auto fitTransform = placement.getTransformToFit(bgPath.getDrawableBounds().reduced(w), bounds);
+        bgPath.setTransform(fitTransform.followedBy(AffineTransform::translation(0, 110.0f)));
+    }
+
+    auto area = getLocalBounds();
     // margins
     area.reduce(10, 10);
 
+    {
+        nameLabel.setJustificationType(Justification::centred);
+        auto nameArea = area;
+        nameLabel.setPaintingIsUnclipped(true);
+        nameLabel.setBounds(nameArea.removeFromTop(5));
+		//nameLabel.setColour(Label::outlineColourId, Colours::white);
+       /* const auto nameBounds = nameLabel.getBounds().toFloat();
+		Path namePath;
+		namePath.addRectangle(nameBounds);
+		namePath.setUsingNonZeroWinding(false);
+		DrawablePath nameDrawable;
+		nameDrawable.setPath(namePath);*/
+		
+        //DrawableRectangle nameRect;		
+		//nameRect.setRectangle(Parallelogram<float>(nameBounds));		
+		//borderPath.setClipPath(nameRect.createCopy());
+
+		//borderPath.setClipPath(nameDrawable.createCopy());
+    }
+	{		
+		auto pad = 10;
+		auto w = -pad+(area.getWidth() - nameLabel.getFont().getStringWidthFloat(nameLabel.getText()))/2.0f;
+		Path path;
+		path.startNewSubPath(area.getX()+ w, area.getY());
+		const auto topLeft = area.getTopLeft();
+		path.lineTo(topLeft.getX(), topLeft.getY());
+		const auto bottomLeft = area.getBottomLeft();
+		path.lineTo(bottomLeft.getX(), bottomLeft.getY());
+		const auto bottomRight = area.getBottomRight();
+		path.lineTo(bottomRight.getX(), bottomRight.getY());
+		const auto topRight = area.getTopRight();
+		path.lineTo(topRight.getX(), topRight.getY());
+		path.lineTo(topRight.getX()-w, topRight.getY());
+		auto roundPath = path.createPathWithRoundedCorners(3);		
+		borderPath.setPath(roundPath);
+	}
+    area.reduce(10, 10);
     auto nPanes = 2;
     const auto midiVisible = *valueTreeState.getRawParameterValue(pidToggleMidiSource);
     if (midiVisible == 1.0f)
@@ -259,6 +310,7 @@ void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsAr
 
 void MusicalRingModAudioProcessorEditor::timerCallback()
 {
+    // TODO use a listener
     if (*valueTreeState.getRawParameterValue(pidToggleMidiSource) == 1.0f)
     {
         lfoFreqSlider.setValue(processor.midiFreqAndOffset);
@@ -268,7 +320,8 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
         offsetOctaveSlider.setVisible(true);
         standardSlider.setVisible(true);
         keyboard.setVisible(true);
-        setSize(800, 600);
+        //setSize(800, 600);
+        resized();
     }
     else
     {
@@ -278,7 +331,8 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
         offsetOctaveSlider.setVisible(false);
         standardSlider.setVisible(false);
         keyboard.setVisible(false);
-        setSize(800, 400);
+        //setSize(800, 400);
+        resized();
     }
     // assuming the midi input is the input signal's fundamental frequency
     const auto f = processor.midiFreq;
