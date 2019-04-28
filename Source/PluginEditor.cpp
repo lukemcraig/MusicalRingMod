@@ -15,7 +15,14 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     : AudioProcessorEditor(&p), valueTreeState(vts), processor(p),
       keyboard(ks, MidiKeyboardComponent::horizontalKeyboard), keyboardState(ks)
 {
-    setSize(800, 600);
+	{
+		const std::unique_ptr<XmlElement> xml(XmlDocument::parse(BinaryData::bg_svg));
+		const std::unique_ptr<Drawable> svgDrawable(Drawable::createFromSVG(*xml));
+		bgPath.setPath((*svgDrawable).getOutlineAsPath());
+		bgPath.setFill(Colour(0xff7c5c48));
+		addAndMakeVisible(bgPath);
+		getLookAndFeel().setColour(ResizableWindow::backgroundColourId, Colour(0xff302d2b));
+	}
 
     setupLfoFreqSlider();
 
@@ -30,13 +37,14 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     addAndMakeVisible(keyboard);
     keyboardState.addListener(this);
 
+    setSize(800, 600);
     startTimerHz(30);
 }
 
 MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
 {
     keyboardState.removeListener(this);
-	stopTimer();
+    stopTimer();
 }
 
 void MusicalRingModAudioProcessorEditor::setupDepthSlider()
@@ -160,7 +168,14 @@ void MusicalRingModAudioProcessorEditor::paint(Graphics& g)
 
 void MusicalRingModAudioProcessorEditor::resized()
 {
-    auto area = getLocalBounds();
+	{
+		const auto bounds = getBounds().toFloat();
+		RectanglePlacement placement(RectanglePlacement::fillDestination);
+        const auto w = bgPath.getDrawableBounds().proportionOfWidth(0.18f);
+		const auto fitTransform = placement.getTransformToFit(bgPath.getDrawableBounds().reduced(w), bounds);
+		bgPath.setTransform(fitTransform);
+	}
+	auto area = getLocalBounds();
     // margins
     area.reduce(10, 10);
 

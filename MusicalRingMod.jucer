@@ -19,6 +19,7 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="Ma1dOV" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <FILE id="f9Z4hF" name="bg.svg" compile="0" resource="1" file="Source/bg.svg"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2017 targetFolder="Builds/VisualStudio2017">

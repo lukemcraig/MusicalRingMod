@@ -31,12 +31,13 @@ public:
     //==============================================================================
     void paint(Graphics&) override;
     void resized() override;
-    void layoutFLabels(Rectangle<int>& fLabelsArea);
     void timerCallback() override;
 
 private:
     AudioProcessorValueTreeState& valueTreeState;
     MusicalRingModAudioProcessor& processor;
+
+	DrawablePath bgPath;
 
     Slider lfoFreqSlider;
     std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment;
@@ -83,7 +84,7 @@ private:
     std::unique_ptr<SliderAttachment> depthSliderAttachment;
     Label depthSliderLabel;
 
-    const std::string noteNames[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    const String noteNames[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     MidiKeyboardComponent keyboard;
     MidiKeyboardState& keyboardState;
@@ -98,6 +99,7 @@ private:
     void setupOffsets();
     void setupSourceToggles();
     void setupLfoFreqSlider();
+	void layoutFLabels(Rectangle<int>& fLabelsArea);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MusicalRingModAudioProcessorEditor)
 };
