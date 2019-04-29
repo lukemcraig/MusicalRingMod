@@ -25,9 +25,6 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     }
 
     {
-        //Path path;
-        //path.addRoundedRectangle(0,0,10,10,.5f);
-        //borderPath.setPath(path);
         borderPath.setFill(Colours::transparentBlack);
         borderPath.setStrokeType(PathStrokeType(1));
         borderPath.setStrokeFill(Colours::white);
@@ -50,6 +47,10 @@ MusicalRingModAudioProcessorEditor::MusicalRingModAudioProcessorEditor(MusicalRi
     addAndMakeVisible(keyboard);
     keyboardState.addListener(this);
 
+	freqGroup.setText("Modulation Frequency:");
+	freqGroup.setTextLabelPosition(Justification::centredLeft);
+	addAndMakeVisible(freqGroup);
+
     startTimerHz(30);
     setResizable(true, true);
     setResizeLimits(400, 400, 1680, 1050);
@@ -64,8 +65,9 @@ MusicalRingModAudioProcessorEditor::~MusicalRingModAudioProcessorEditor()
 
 void MusicalRingModAudioProcessorEditor::setupDepthSlider()
 {
-    depthSliderLabel.setText("Depth:", dontSendNotification);
-    addAndMakeVisible(depthSliderLabel);
+	depthGroup.setText("Depth:");
+	depthGroup.setTextLabelPosition(Justification::centredLeft);
+	addAndMakeVisible(depthGroup);    
 
     depthSlider.setSliderStyle(Slider::LinearBar);
 
@@ -77,8 +79,9 @@ void MusicalRingModAudioProcessorEditor::setupDepthSlider()
 
 void MusicalRingModAudioProcessorEditor::setupOffsets()
 {
-    offsetsLabel.setText("Offsets:", dontSendNotification);
-    addAndMakeVisible(offsetsLabel);
+	offsetsGroup.setText("Offsets:");
+	offsetsGroup.setTextLabelPosition(Justification::centredLeft);
+	addAndMakeVisible(offsetsGroup);
 
     offsetOctaveSlider.setSliderStyle(Slider::IncDecButtons);
     offsetOctaveSlider.setTextBoxStyle(Slider::TextBoxAbove, false, offsetOctaveSlider.getTextBoxWidth(),
@@ -124,7 +127,7 @@ void MusicalRingModAudioProcessorEditor::setupSourceToggles()
 
 void MusicalRingModAudioProcessorEditor::setupLfoFreqSlider()
 {
-    lfoFreqSliderLabel.setText("Frequency:", dontSendNotification);
+    lfoFreqSliderLabel.setText("Source:", dontSendNotification);
     addAndMakeVisible(lfoFreqSliderLabel);
 
     lfoFreqSlider.setSliderStyle(Slider::LinearBar);
@@ -137,8 +140,9 @@ void MusicalRingModAudioProcessorEditor::setupLfoFreqSlider()
 
 void MusicalRingModAudioProcessorEditor::setupFLabels()
 {
-    fOutLabel.setText("Input/Output Frequencies:", dontSendNotification);
-    addAndMakeVisible(fOutLabel);
+	fOutGroup.setText("Input/Output Frequencies:");
+	fOutGroup.setTextLabelPosition(Justification::centredLeft);
+	addAndMakeVisible(fOutGroup);    
 
     fLabel.setText("f:", dontSendNotification);
     addAndMakeVisible(fLabel);
@@ -191,7 +195,7 @@ void MusicalRingModAudioProcessorEditor::resized()
         bgPath.setTransform(fitTransform.followedBy(AffineTransform::translation(0, 110.0f)));
     }
 
-    auto area = getLocalBounds();
+    auto area = getLocalBounds();	
     // margins
     area.reduce(10, 10);
 
@@ -200,19 +204,6 @@ void MusicalRingModAudioProcessorEditor::resized()
         auto nameArea = area;
         nameLabel.setPaintingIsUnclipped(true);
         nameLabel.setBounds(nameArea.removeFromTop(5));
-		//nameLabel.setColour(Label::outlineColourId, Colours::white);
-       /* const auto nameBounds = nameLabel.getBounds().toFloat();
-		Path namePath;
-		namePath.addRectangle(nameBounds);
-		namePath.setUsingNonZeroWinding(false);
-		DrawablePath nameDrawable;
-		nameDrawable.setPath(namePath);*/
-		
-        //DrawableRectangle nameRect;		
-		//nameRect.setRectangle(Parallelogram<float>(nameBounds));		
-		//borderPath.setClipPath(nameRect.createCopy());
-
-		//borderPath.setClipPath(nameDrawable.createCopy());
     }
 	{		
 		auto pad = 10;
@@ -238,20 +229,21 @@ void MusicalRingModAudioProcessorEditor::resized()
         nPanes += 2;
     const auto paneAreaHeight = area.getHeight() / nPanes;
     const auto paneMargin = 5;
-
     {
         auto depthAndFLabelsArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
-        auto depthArea = depthAndFLabelsArea.removeFromLeft(depthAndFLabelsArea.proportionOfWidth(0.5f));
-        depthSliderLabel.setBounds(depthArea.removeFromTop(40).reduced(0, 10));
-        depthSlider.setBounds(depthArea.reduced(20, 10));
-        layoutFLabels(depthAndFLabelsArea);
+		auto fLabelsArea = depthAndFLabelsArea.removeFromRight(300);
+		layoutFLabels(fLabelsArea);
+        //auto depthArea = depthAndFLabelsArea.removeFromLeft(depthAndFLabelsArea.proportionOfWidth(0.5f));
+		depthGroup.setBounds(depthAndFLabelsArea);
+        depthSlider.setBounds(depthAndFLabelsArea.reduced(20, 20));
+        
     }
-
+	freqGroup.setBounds(area);
     {
-        auto freqArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
-
+        auto freqArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);	
+		freqArea.removeFromTop(20);
         auto freqAreaTop = freqArea.removeFromTop(20);
-        lfoFreqSliderLabel.setBounds(freqAreaTop.removeFromLeft(80));
+        lfoFreqSliderLabel.setBounds(freqAreaTop.removeFromLeft(60));
         midiSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
         sliderSourceButton.setBounds(freqAreaTop.removeFromLeft(80));
 
@@ -260,9 +252,9 @@ void MusicalRingModAudioProcessorEditor::resized()
 
     if (midiVisible == 1.0f)
     {
-        auto offsetsArea = area.removeFromTop(paneAreaHeight).reduced(paneMargin);
-
-        offsetsLabel.setBounds(offsetsArea.removeFromTop(40).reduced(0, 10));
+        auto offsetsArea = area.removeFromTop(paneAreaHeight).reduced(10);
+		offsetsGroup.setBounds(offsetsArea);
+		offsetsArea.reduce(10, 10);
         const auto nSliders = 4;
         const auto sliderWidth = offsetsArea.proportionOfWidth(1.0f / nSliders);
         offsetOctaveSlider.setBounds(offsetsArea.removeFromLeft(sliderWidth).reduced(20, 10));
@@ -272,23 +264,25 @@ void MusicalRingModAudioProcessorEditor::resized()
     }
 
     {
-        const auto keyboardArea = area.removeFromTop(paneAreaHeight);
+        const auto keyboardArea = area.removeFromTop(paneAreaHeight).reduced(10,10);
         keyboard.setBounds(keyboardArea);
     }
 }
 
 void MusicalRingModAudioProcessorEditor::layoutFLabels(Rectangle<int>& fLabelsArea)
 {
-    const auto space = 20;
-    fOutLabel.setBounds(fLabelsArea.removeFromTop(20));
+    const auto space = 18;
+    fOutGroup.setBounds(fLabelsArea);
+	fLabelsArea.removeFromLeft(10);
+	fLabelsArea.removeFromTop(15);
     {
-        auto fLeftArea = fLabelsArea.removeFromLeft(40);
+        auto fLeftArea = fLabelsArea.removeFromLeft(30);
 
         fLabel.setBounds(fLeftArea.removeFromTop(space));
         fcLabel.setBounds(fLeftArea.removeFromTop(space));
     }
     {
-        auto fLeftArea = fLabelsArea.removeFromLeft(140);
+        auto fLeftArea = fLabelsArea.removeFromLeft(100);
 
         fValueLabel.setBounds(fLeftArea.removeFromTop(space));
         fcValueLabel.setBounds(fLeftArea.removeFromTop(space));
@@ -314,32 +308,32 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
     if (*valueTreeState.getRawParameterValue(pidToggleMidiSource) == 1.0f)
     {
         lfoFreqSlider.setValue(processor.midiFreqAndOffset);
-        offsetsLabel.setVisible(true);
+        offsetsGroup.setVisible(true);
         offsetSemitoneSlider.setVisible(true);
         offsetCentsSlider.setVisible(true);
         offsetOctaveSlider.setVisible(true);
         standardSlider.setVisible(true);
         keyboard.setVisible(true);
         //setSize(800, 600);
-        resized();
+        //resized();
     }
     else
     {
-        offsetsLabel.setVisible(false);
+		offsetsGroup.setVisible(false);
         offsetSemitoneSlider.setVisible(false);
         offsetCentsSlider.setVisible(false);
         offsetOctaveSlider.setVisible(false);
         standardSlider.setVisible(false);
         keyboard.setVisible(false);
         //setSize(800, 400);
-        resized();
+        //resized();
     }
     // assuming the midi input is the input signal's fundamental frequency
     const auto f = processor.midiFreq;
     const auto fc = lfoFreqSlider.getValue();
 
-    fValueLabel.setText(String(f) + "Hz,  " + frequencyToNoteName(f), dontSendNotification);
-    fcValueLabel.setText(String(fc) + "Hz,  " + frequencyToNoteName(fc), dontSendNotification);
+    fValueLabel.setText(String(f) + "Hz, " + frequencyToNoteName(f), dontSendNotification);
+    fcValueLabel.setText(String(fc) + "Hz, " + frequencyToNoteName(fc), dontSendNotification);
 
     {
         auto i = 0;
@@ -348,7 +342,7 @@ void MusicalRingModAudioProcessorEditor::timerCallback()
             const int j = (i / 2) + 1;
             const auto evenOrOdd = i % 2 ? 1 : -1;
             const auto freqValue = j * f + (evenOrOdd * fc);
-            freqValueLabel.setText(String(freqValue) + "Hz,  " + frequencyToNoteName(freqValue), dontSendNotification);
+            freqValueLabel.setText(String(freqValue) + "Hz, " + frequencyToNoteName(freqValue), dontSendNotification);
             ++i;
         }
     }

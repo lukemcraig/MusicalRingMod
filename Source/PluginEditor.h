@@ -41,11 +41,13 @@ private:
 	DrawablePath borderPath;
 	Label nameLabel;
 
+	GroupComponent freqGroup;
     Slider lfoFreqSlider;
     std::unique_ptr<SliderAttachment> lfoFreqSliderAttachment;
 
     Label lfoFreqSliderLabel;
-    Label offsetsLabel;
+
+	GroupComponent offsetsGroup;
 
     Slider offsetOctaveSlider;
     std::unique_ptr<SliderAttachment> offsetOctaveSliderAttachment;
@@ -59,7 +61,7 @@ private:
     Slider standardSlider;
     std::unique_ptr<SliderAttachment> standardSliderAttachment;
 
-    Label fOutLabel;
+	GroupComponent fOutGroup;
 
     Label fLabel;
     Label fcLabel;
@@ -84,7 +86,7 @@ private:
 
     Slider depthSlider;
     std::unique_ptr<SliderAttachment> depthSliderAttachment;
-    Label depthSliderLabel;
+	GroupComponent depthGroup;
 
     const String noteNames[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
